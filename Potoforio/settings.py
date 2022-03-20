@@ -28,8 +28,7 @@ DEBUG = True
 
 # Load variables from environment
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
-DB_DIR = os.environ.get('DB_DIR', '')
-
+DB_DIR = Path(os.environ.get('DB_DIR', './data'))
 
 # Application definition
 
@@ -88,10 +87,10 @@ WSGI_APPLICATION = 'Potoforio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': DB_DIR or BASE_DIR / 'db.sqlite3',
+        'NAME': (DB_DIR or BASE_DIR) / 'db.sqlite3',
     }
 }
-
+print(DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
