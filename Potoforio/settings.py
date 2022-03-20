@@ -26,7 +26,9 @@ SECRET_KEY = 'django-insecure-wd()1466fa+e@$=beda94(0i4m+7k#04(laqwmuv=6*h6#et0@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Load variables from environment
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
+DB_DIR = os.environ.get('DB_DIR', '')
 
 
 # Application definition
@@ -86,7 +88,7 @@ WSGI_APPLICATION = 'Potoforio.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'NAME': DB_DIR or BASE_DIR / 'db.sqlite3',
     }
 }
 
