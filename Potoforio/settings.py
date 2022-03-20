@@ -28,7 +28,7 @@ DEBUG = True
 
 # Load variables from environment
 ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split()
-DB_DIR = Path(os.environ.get('DB_DIR', './data'))
+DB_DIR = Path(os.environ.get('DB_DIR', ''))
 
 # Application definition
 
