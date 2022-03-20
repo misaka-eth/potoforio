@@ -1,5 +1,5 @@
 """
-WSGI config for Potoforio project.
+WSGI config for potoforio project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
@@ -15,7 +15,7 @@ from .provider_loader import load_plugins
 from initial_data.initial_data import init_data
 from .history_manager import history_manager
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'Potoforio.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'potoforio.settings')
 
 application = get_wsgi_application()
 
