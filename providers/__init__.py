@@ -35,7 +35,7 @@ class PriceProvider(Provider):
                     price_difference_str = f"{'+' if price_difference > 0 else ''}{price_difference:.2f}"
                 else:
                     price_difference_str = "~"
-                self._logger.info(f"{log_prefix} New price: {price} ({price_difference_str})")
+                self._logger.debug(f"{log_prefix} New price: {price} ({price_difference_str})")
                 TokenPriceHistory.objects.create(token=token, price=price)
             else:
                 self._logger.debug(f"{log_prefix} Skip update: price doesn't change")

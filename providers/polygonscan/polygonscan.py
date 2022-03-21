@@ -5,6 +5,10 @@ from core.models import Wallet, Blockchain, TokenOnBlockchain
 
 
 class PolygonScan(BalanceProvider):
+    def __init__(self):
+        super().__init__()
+        self._unknown_tokens = []
+
     async def scan_wallet(self, wallet: Wallet):
         url = f"https://polygonscan.com/address/{wallet.address}"
         response = await self._request('GET', url)
@@ -21,8 +25,12 @@ class PolygonScan(BalanceProvider):
 
             blockchain_polygon = Blockchain.objects.filter(name="Polygon").last()
             token_on_polygon = TokenOnBlockchain.objects.filter(address=token_address).last()
-            if not token_on_polygon:
+
+            if token_address not in self._unknown_tokens:
+                self._unknown_tokens.append(token_address)
                 self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
+
+            if not token_on_polygon:
                 continue
 
             balance = str(int(float(amount) * pow(10, token_on_polygon.token.decimals)))

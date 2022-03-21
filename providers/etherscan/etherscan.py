@@ -5,6 +5,10 @@ from core.models import Wallet, Blockchain, TokenOnBlockchain
 
 
 class EtherscanBalanceProvider(BalanceProvider):
+    def __init__(self):
+        super().__init__()
+        self._unknown_tokens = []
+
     async def scan_wallet(self, wallet: Wallet):
         url = f"https://etherscan.io/address/{wallet.address}"
         response = await self._request('GET', url)
@@ -35,8 +39,12 @@ class EtherscanBalanceProvider(BalanceProvider):
             self._logger.debug(f"{wallet.address}: {amount}{ticker}")
 
             token_on_eth = TokenOnBlockchain.objects.filter(address=token_address).last()
-            if not token_on_eth:
+
+            if token_address not in self._unknown_tokens:
+                self._unknown_tokens.append(token_address)
                 self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
+
+            if not token_on_eth:
                 continue
 
             balance = str(int(float(amount) * pow(10, token_on_eth.token.decimals)))
