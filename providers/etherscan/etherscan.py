@@ -40,11 +40,10 @@ class EtherscanBalanceProvider(BalanceProvider):
 
             token_on_eth = TokenOnBlockchain.objects.filter(address=token_address).last()
 
-            if token_address not in self._unknown_tokens:
-                self._unknown_tokens.append(token_address)
-                self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
-
             if not token_on_eth:
+                if token_address not in self._unknown_tokens:
+                    self._unknown_tokens.append(token_address)
+                    self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
                 continue
 
             balance = str(int(float(amount) * pow(10, token_on_eth.token.decimals)))

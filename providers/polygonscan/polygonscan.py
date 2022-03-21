@@ -26,11 +26,10 @@ class PolygonScan(BalanceProvider):
             blockchain_polygon = Blockchain.objects.filter(name="Polygon").last()
             token_on_polygon = TokenOnBlockchain.objects.filter(address=token_address).last()
 
-            if token_address not in self._unknown_tokens:
-                self._unknown_tokens.append(token_address)
-                self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
-
             if not token_on_polygon:
+                if token_address not in self._unknown_tokens:
+                    self._unknown_tokens.append(token_address)
+                    self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
                 continue
 
             balance = str(int(float(amount) * pow(10, token_on_polygon.token.decimals)))
