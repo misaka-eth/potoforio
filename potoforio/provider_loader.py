@@ -10,6 +10,8 @@ from providers import PriceProvider, BalanceProvider
 
 logging.basicConfig(level=logging.INFO)
 
+LOGGER = logging.getLogger(__name__)
+
 
 def start_price_provider(price_provider: PriceProvider.__class__):
     async def run_forever():
@@ -17,10 +19,9 @@ def start_price_provider(price_provider: PriceProvider.__class__):
         while True:
             try:
                 await client.scan()
-                print("Scanned")
             except Exception as error:
+                LOGGER.warning(f"Error occurred: {error}")
                 traceback.print_tb(error.__traceback__)
-                print(f"Error occurred: {error}")
             time.sleep(60)
 
     subprocess = Thread(target=asyncio.run, args=[run_forever(), ])
@@ -33,10 +34,9 @@ def start_balance_provider(balance_provider: BalanceProvider.__class__):
         while True:
             try:
                 await client.scan_all_wallet()
-                print("Scanned")
             except Exception as error:
+                LOGGER.warning(f"Error occurred: {error}")
                 traceback.print_tb(error.__traceback__)
-                print(f"Error occurred: {error}")
             time.sleep(60)
 
     subprocess = Thread(target=asyncio.run, args=[run_forever(), ])
@@ -49,10 +49,10 @@ def start_provider(provider_modules):
         if not inspect.isclass(provider_class):
             continue
         if issubclass(provider_class, PriceProvider):
-            print(f"Found price provider: {provider_class}")
+            LOGGER.info(f"Found price provider: {provider_class}")
             start_price_provider(provider_class)
         if issubclass(provider_class, BalanceProvider):
-            print(f"Found balance provider: {provider_class}")
+            LOGGER.info(f"Found balance provider: {provider_class}")
             start_balance_provider(provider_class)
 
 
@@ -64,7 +64,7 @@ def load_plugins():
     for provider in providers:
         if os.path.isdir(os.path.join(providers_dir, provider)):
             provider_path = f'providers.{provider}'
-            print(f"Loading provider: {provider_path}")
+            LOGGER.info(f"Loading providers in: {provider_path}")
 
             __import__(f'providers.{provider}')
 

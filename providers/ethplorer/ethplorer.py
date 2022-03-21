@@ -19,7 +19,6 @@ class EthplorerClient(BalanceProvider):
         async with aiohttp.ClientSession() as session:
             async with session.get(url, params=params) as response:
                 response = await response.json()
-                print(response)
 
                 blockchain_eth = Blockchain.objects.filter(name="Ethereum").last()
                 eth_on_eth = TokenOnBlockchain.objects.filter(blockchain=blockchain_eth, token__ticker="ETH").last()

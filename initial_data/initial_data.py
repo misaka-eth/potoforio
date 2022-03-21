@@ -1,4 +1,7 @@
 from core.models import Blockchain, Token, TokenOnBlockchain
+import logging
+
+LOGGER = logging.getLogger(__name__)
 
 blockchains = [
     {"name": "Ethereum", "explorer": "https://etherscan.io/address/"},
@@ -39,7 +42,7 @@ tokens_on_blockchains = [
 def init_data():
     # If any data already exists
     if Blockchain.objects.first():
-        print("Initial data already exists")
+        LOGGER.info("Initial data already exists")
         return
 
     for blockchain in blockchains:
@@ -59,4 +62,4 @@ def init_data():
 
         TokenOnBlockchain.objects.create(blockchain=blockchain, token=token, address=address)
 
-    print("Initial data created")
+    LOGGER.info("Initial data created")
