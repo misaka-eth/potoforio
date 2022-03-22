@@ -1,13 +1,13 @@
 from providers import BalanceProvider
 from bs4 import BeautifulSoup
 
-from core.models import Wallet, Blockchain, TokenOnBlockchain
+from core.models import Wallet, Blockchain, AssetOnBlockchain
 
 
 class PolygonScan(BalanceProvider):
     def __init__(self):
         super().__init__()
-        self._unknown_tokens = []
+        self._unknown_assets = []
 
     async def scan_wallet(self, wallet: Wallet):
         url = f"https://polygonscan.com/address/{wallet.address}"
@@ -16,28 +16,28 @@ class PolygonScan(BalanceProvider):
 
         soup = BeautifulSoup(response, 'html.parser')
 
-        erc20_tokens = soup.find_all(class_="list-custom-ERC-20")
-        for erc20_token in erc20_tokens:
-            href = erc20_token.find('a').get('href')
-            amount, ticker = erc20_token.find(class_='list-amount').text.split()
-            token_address = href.split("?")[0].split("/")[2]
+        erc20_assets = soup.find_all(class_="list-custom-ERC-20")
+        for erc20_asset in erc20_assets:
+            href = erc20_asset.find('a').get('href')
+            amount, ticker = erc20_asset.find(class_='list-amount').text.split()
+            asset_address = href.split("?")[0].split("/")[2]
             self._logger.debug(f"{wallet.address}: {amount}{ticker}")
 
             blockchain_polygon = Blockchain.objects.filter(name="Polygon").last()
-            token_on_polygon = TokenOnBlockchain.objects.filter(address=token_address).last()
+            asset_on_polygon = AssetOnBlockchain.objects.filter(address=asset_address).last()
 
-            if not token_on_polygon:
-                if token_address not in self._unknown_tokens:
-                    self._unknown_tokens.append(token_address)
-                    self._logger.warning(f"Unknown token: {amount} {ticker} with address {token_address}")
+            if not asset_on_polygon:
+                if asset_address not in self._unknown_assets:
+                    self._unknown_assets.append(asset_address)
+                    self._logger.warning(f"Unknown asset: {amount} {ticker} with address {asset_address}")
                 continue
 
-            balance = str(int(float(amount) * pow(10, token_on_polygon.token.decimals)))
+            balance = str(int(float(amount) * pow(10, asset_on_polygon.asset.decimals)))
 
             await self._update_balance(
                 wallet=wallet,
                 blockchain=blockchain_polygon,
-                token=token_on_polygon.token,
+                asset=asset_on_polygon.asset,
                 balance=balance
             )
 

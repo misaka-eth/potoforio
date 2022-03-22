@@ -1,6 +1,6 @@
 from providers import BalanceProvider
 
-from core.models import Token, Wallet, Blockchain
+from core.models import Asset, Wallet, Blockchain
 
 
 class BeaconchainClient(BalanceProvider):
@@ -19,10 +19,10 @@ class BeaconchainClient(BalanceProvider):
         response = await response.json()
 
         blockchain_eth2 = Blockchain.objects.filter(name="Ethereum 2.0").last()
-        token_eth = Token.objects.filter(ticker='ETH').last()
+        asset_eth = Asset.objects.filter(ticker='ETH').last()
         balance = response.get('data').get('balance') * pow(10, 9)
 
-        await self._update_balance(wallet=wallet, blockchain=blockchain_eth2, token=token_eth, balance=str(balance))
+        await self._update_balance(wallet=wallet, blockchain=blockchain_eth2, asset=asset_eth, balance=str(balance))
 
     async def scan_all_wallet(self):
         wallets = Wallet.objects.filter()

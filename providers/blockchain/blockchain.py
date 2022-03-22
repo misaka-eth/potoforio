@@ -1,7 +1,7 @@
 import aiohttp
 
 from providers import BalanceProvider
-from core.models import Wallet, Blockchain, TokenOnBlockchain
+from core.models import Wallet, Blockchain, AssetOnBlockchain
 
 
 class BlockchainClient(BalanceProvider):
@@ -14,14 +14,14 @@ class BlockchainClient(BalanceProvider):
                 response = await response.json()
 
                 blockchain_btc = Blockchain.objects.filter(name="Bitcoin").last()
-                btc_on_btc = TokenOnBlockchain.objects.filter(blockchain=blockchain_btc, token__ticker="BTC").last()
+                btc_on_btc = AssetOnBlockchain.objects.filter(blockchain=blockchain_btc, asset__ticker="BTC").last()
 
                 balance = str(response.get(wallet.address).get('final_balance'))
 
                 await self._update_balance(
                     wallet=wallet,
                     blockchain=blockchain_btc,
-                    token=btc_on_btc.token,
+                    asset=btc_on_btc.asset,
                     balance=balance
                 )
 

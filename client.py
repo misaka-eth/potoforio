@@ -23,13 +23,13 @@ def print_balances():
     prices = {}
     for wallet in wallets:
 
-        tokens_on_blockchains = wallet.get('tokens_on_blockchains')
-        for tokens_on_blockchain in tokens_on_blockchains:
-            token_on_blockchain = tokens_on_blockchain.get('token_on_blockchain')
-            ticker = token_on_blockchain.get('token').get('ticker')
-            last_price = token_on_blockchain.get('token').get('last_price')
-            decimals = token_on_blockchain.get('token').get('decimals')
-            balance = tokens_on_blockchain.get('balance').get('balance')
+        assets_on_blockchains = wallet.get('assets_on_blockchains')
+        for assets_on_blockchain in assets_on_blockchains:
+            asset_on_blockchain = assets_on_blockchain.get('asset_on_blockchain')
+            ticker = asset_on_blockchain.get('asset').get('ticker')
+            last_price = asset_on_blockchain.get('asset').get('last_price')
+            decimals = asset_on_blockchain.get('asset').get('decimals')
+            balance = assets_on_blockchain.get('balance').get('balance')
             balance = int(balance) / pow(10, decimals)
 
             balances[ticker] = balances.get(ticker, 0) + balance

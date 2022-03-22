@@ -1,4 +1,4 @@
-from core.models import Blockchain, Token, TokenOnBlockchain
+from core.models import Blockchain, Asset, AssetOnBlockchain
 import logging
 
 LOGGER = logging.getLogger(__name__)
@@ -13,7 +13,7 @@ blockchains = [
     {"name": "Polygon", "explorer": "https://polygonscan.com/address/"},
 ]
 
-tokens = [
+assets = [
     {'name': "Ether", "ticker": "ETH", "decimals": 18},
     {'name': "Wrapped Ether", "ticker": "WETH", "decimals": 18},
     {'name': "Thether USD", "ticker": "USDT", "decimals": 6},
@@ -24,7 +24,7 @@ tokens = [
     {'name': "Polygon", "ticker": "MATIC", "decimals": 18},
 ]
 
-tokens_on_blockchains = [
+assets_on_blockchains = [
     ("Ethereum", "ETH", None),
     ("Ethereum", "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
     ("Ethereum Validator", "ETH", None),
@@ -48,18 +48,18 @@ def init_data():
     for blockchain in blockchains:
         Blockchain.objects.create(name=blockchain['name'], explorer=blockchain['explorer'])
 
-    for token in tokens:
-        Token.objects.create(
-            name=token['name'],
-            ticker=token['ticker'],
-            decimals=token['decimals']
+    for asset in assets:
+        Asset.objects.create(
+            name=asset['name'],
+            ticker=asset['ticker'],
+            decimals=asset['decimals']
         )
 
-    for token_on_blockchain in tokens_on_blockchains:
-        blockchain_name, token_ticker, address = token_on_blockchain
+    for asset_on_blockchain in assets_on_blockchains:
+        blockchain_name, asset_ticker, address = asset_on_blockchain
         blockchain = Blockchain.objects.filter(name=blockchain_name).first()
-        token = Token.objects.filter(ticker=token_ticker).first()
+        asset = Asset.objects.filter(ticker=asset_ticker).first()
 
-        TokenOnBlockchain.objects.create(blockchain=blockchain, token=token, address=address)
+        AssetOnBlockchain.objects.create(blockchain=blockchain, asset=asset, address=address)
 
     LOGGER.info("Initial data created")

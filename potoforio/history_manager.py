@@ -14,10 +14,10 @@ def history_manager():
             wallets = Wallet.objects.all()
             total_balance = 0
             for wallet in wallets:
-                for tokens_on_blockchains in WalletSerializer(wallet).data['tokens_on_blockchains']:
-                    balance = tokens_on_blockchains.get('balance').get('balance')
-                    decimals = tokens_on_blockchains.get('token_on_blockchain').get('token').get('decimals')
-                    last_price = tokens_on_blockchains.get('token_on_blockchain').get('token').get('last_price')
+                for assets_on_blockchains in WalletSerializer(wallet).data['assets_on_blockchains']:
+                    balance = assets_on_blockchains.get('balance').get('balance')
+                    decimals = assets_on_blockchains.get('asset_on_blockchain').get('asset').get('decimals')
+                    last_price = assets_on_blockchains.get('asset_on_blockchain').get('asset').get('last_price')
 
                     current_balance = int(balance)/pow(10, decimals) * last_price
                     total_balance += current_balance

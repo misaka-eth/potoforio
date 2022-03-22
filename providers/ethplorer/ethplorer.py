@@ -1,7 +1,7 @@
 import aiohttp
 from providers import BalanceProvider
 
-from core.models import Wallet, Blockchain, TokenOnBlockchain
+from core.models import Wallet, Blockchain, AssetOnBlockchain
 
 
 class EthplorerClient(BalanceProvider):
@@ -21,31 +21,31 @@ class EthplorerClient(BalanceProvider):
                 response = await response.json()
 
                 blockchain_eth = Blockchain.objects.filter(name="Ethereum").last()
-                eth_on_eth = TokenOnBlockchain.objects.filter(blockchain=blockchain_eth, token__ticker="ETH").last()
+                eth_on_eth = AssetOnBlockchain.objects.filter(blockchain=blockchain_eth, asset__ticker="ETH").last()
                 eth_balance = response.get('ETH').get('rawBalance')
 
                 await self._update_balance(
                     wallet=wallet,
                     blockchain=blockchain_eth,
-                    token=eth_on_eth.token,
+                    asset=eth_on_eth.asset,
                     balance=eth_balance
                 )
 
-                tokens = response.get('tokens', [])
-                for token in tokens:
-                    address = token.get('tokenInfo').get('address')
-                    balance = token.get("rawBalance")
+                assets = response.get('tokens', [])
+                for asset in assets:
+                    address = asset.get('tokenInfo').get('address')
+                    balance = asset.get("rawBalance")
                     ticker = "<UNKNOWN>"
 
-                    token_on_eth = TokenOnBlockchain.objects.filter(blockchain=blockchain_eth, address=address).last()
-                    if not token_on_eth:
-                        self._logger.warning(f"Unknown token: {balance} {ticker} with address {address}")
+                    asset_on_eth = AssetOnBlockchain.objects.filter(blockchain=blockchain_eth, address=address).last()
+                    if not asset_on_eth:
+                        self._logger.warning(f"Unknown asset: {balance} {ticker} with address {address}")
                         continue
 
                     await self._update_balance(
                         wallet=wallet,
                         blockchain=blockchain_eth,
-                        token=token_on_eth.token,
+                        asset=asset_on_eth.asset,
                         balance=balance
                     )
 

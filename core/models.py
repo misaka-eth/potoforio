@@ -3,7 +3,7 @@ from django.db import models
 
 class Blockchain(models.Model):
     """
-    Blockchain is infrastructure for tokens/coins.
+    Blockchain is infrastructure for assets/coins.
     """
     name = models.CharField(max_length=200, unique=True)
     explorer = models.CharField(max_length=200)
@@ -12,15 +12,15 @@ class Blockchain(models.Model):
         return self.name
 
 
-class Token(models.Model):
+class Asset(models.Model):
     """
-    Token/Coin is valuable that stored on blockchain
+    Asset is valuable that stored on blockchain
     """
     name = models.CharField(max_length=200)
     ticker = models.CharField(max_length=10, unique=True)
     decimals = models.IntegerField()
 
-    blockchains = models.ManyToManyField(Blockchain, through='TokenOnBlockchain')
+    blockchains = models.ManyToManyField(Blockchain, through='AssetOnBlockchain')
 
     def __str__(self):
         return f"{self.ticker} | {self.name}"
@@ -38,61 +38,61 @@ class Wallet(models.Model):
         return f"{self.name} {self.address}"
 
 
-class TokenOnBlockchain(models.Model):
+class AssetOnBlockchain(models.Model):
     """
-    Any token can be represented on different blockchain via bridges, in this case we can track token by address.
-    Native tokens usual doesn't have address.
+    Any asset can be represented on different blockchain via bridges, in this case we can track asset by address.
+    Native assets usual doesn't have address.
     """
     blockchain = models.ForeignKey(Blockchain, on_delete=models.CASCADE)
-    token = models.ForeignKey(Token, on_delete=models.CASCADE, related_name='tokens_on_blockchains')
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name='assets_on_blockchains')
     address = models.CharField(max_length=200, null=True)
 
     class Meta:
-        unique_together = ('blockchain', 'token',)
+        unique_together = ('blockchain', 'asset',)
 
     def __str__(self):
-        return f"{self.token} on {self.blockchain}"
+        return f"{self.asset} on {self.blockchain}"
 
 
-class WalletWithTokenOnBlockchain(models.Model):
+class WalletWithAssetOnBlockchain(models.Model):
     """
-    If wallet has token on specific blockchain record it here.
+    If wallet has asset on specific blockchain record it here.
     """
-    token_on_blockchain = models.ForeignKey(TokenOnBlockchain, on_delete=models.CASCADE, related_name='wallets')
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name='tokens_on_blockchains')
+    asset_on_blockchain = models.ForeignKey(AssetOnBlockchain, on_delete=models.CASCADE, related_name='wallets')
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name='assets_on_blockchains')
 
     class Meta:
-        unique_together = ('token_on_blockchain', 'wallet',)
+        unique_together = ('asset_on_blockchain', 'wallet',)
 
     def __str__(self):
-        return f"Wallet {self.wallet} with {self.token_on_blockchain}"
+        return f"Wallet {self.wallet} with {self.asset_on_blockchain}"
 
 
-class WalletHistoryWithTokenOnBlockchain(models.Model):
+class WalletHistoryWithAssetOnBlockchain(models.Model):
     """
     Wallet have balance history.
     History collected at specific time or can be specified by user.
     """
-    wallet_with_token_on_blockchain = models.ForeignKey(WalletWithTokenOnBlockchain, on_delete=models.CASCADE, related_name='history')
+    wallet_with_asset_on_blockchain = models.ForeignKey(WalletWithAssetOnBlockchain, on_delete=models.CASCADE, related_name='history')
 
     timestamp = models.DateTimeField(auto_now_add=True)
     balance = models.CharField(max_length=200)
     manual = models.BooleanField(default=False)
 
     class Meta:
-        unique_together = ('wallet_with_token_on_blockchain', 'timestamp', 'balance')
+        unique_together = ('wallet_with_asset_on_blockchain', 'timestamp', 'balance')
 
 
-class TokenPriceHistory(models.Model):
+class AssetPriceHistory(models.Model):
     """
-    Token price for balance calculating
+    Asset price for balance calculating
     """
-    token = models.ForeignKey(Token, on_delete=models.CASCADE, related_name="prices")
+    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="prices")
     timestamp = models.DateTimeField(auto_now_add=True)
     price = models.FloatField()
 
     class Meta:
-        unique_together = ('token', 'timestamp', 'price')
+        unique_together = ('asset', 'timestamp', 'price')
 
 
 class BalanceHistory(models.Model):

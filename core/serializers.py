@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
-from .models import Blockchain, Token, Wallet, TokenOnBlockchain, WalletWithTokenOnBlockchain, \
-    WalletHistoryWithTokenOnBlockchain, TokenPriceHistory, BalanceHistory
+from .models import Blockchain, Asset, Wallet, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
+    WalletHistoryWithAssetOnBlockchain, AssetPriceHistory, BalanceHistory
 
 
 class BlockchainSerializer(serializers.ModelSerializer):
@@ -10,68 +10,68 @@ class BlockchainSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class WalletHistoryWithTokenOnBlockchainSerializer(serializers.ModelSerializer):
+class WalletHistoryWithAssetOnBlockchainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = WalletHistoryWithTokenOnBlockchain
+        model = WalletHistoryWithAssetOnBlockchain
         fields = '__all__'
 
 
-class TokenOnBlockchainSerializerForTokenSerializer(serializers.ModelSerializer):
+class AssetOnBlockchainSerializerForAssetSerializer(serializers.ModelSerializer):
     blockchain = BlockchainSerializer()
-    history = WalletHistoryWithTokenOnBlockchainSerializer(many=True, read_only=True)
+    history = WalletHistoryWithAssetOnBlockchainSerializer(many=True, read_only=True)
 
     class Meta:
-        model = TokenOnBlockchain
+        model = AssetOnBlockchain
         fields = ['id', 'address', 'blockchain', 'history']
 
 
-class TokenSerializer(serializers.ModelSerializer):
+class AssetSerializer(serializers.ModelSerializer):
     last_price = serializers.SerializerMethodField(read_only=True)
-    tokens_on_blockchains = TokenOnBlockchainSerializerForTokenSerializer(many=True, read_only=True)
+    assets_on_blockchains = AssetOnBlockchainSerializerForAssetSerializer(many=True, read_only=True)
 
     class Meta:
-        model = Token
-        fields = ['id', 'name', 'ticker', 'decimals', 'last_price', 'tokens_on_blockchains']
+        model = Asset
+        fields = ['id', 'name', 'ticker', 'decimals', 'last_price', 'assets_on_blockchains']
 
-    def get_last_price(self, token: Token):
-        price_data = TokenPriceHistory.objects.filter(token=token).order_by('timestamp').last()
+    def get_last_price(self, asset: Asset):
+        price_data = AssetPriceHistory.objects.filter(asset=asset).order_by('timestamp').last()
         return price_data.price if price_data else 0
 
 
-class TokenOnBlockchainSerializer(serializers.ModelSerializer):
+class AssetOnBlockchainSerializer(serializers.ModelSerializer):
     class Meta:
-        model = TokenOnBlockchain
+        model = AssetOnBlockchain
         fields = '__all__'
 
 
-class TokenOnBlockchainSerializerForWalletWithTokenOnBlockchainSerializerForWalletSerializer(serializers.ModelSerializer):
+class AssetOnBlockchainSerializerForWalletWithAssetOnBlockchainSerializerForWalletSerializer(serializers.ModelSerializer):
     blockchain = BlockchainSerializer()
-    token = TokenSerializer()
+    asset = AssetSerializer()
 
     class Meta:
-        model = TokenOnBlockchain
-        fields = ['id', 'address', 'blockchain', 'token']
+        model = AssetOnBlockchain
+        fields = ['id', 'address', 'blockchain', 'asset']
 
 
-class WalletWithTokenOnBlockchainSerializerForWalletSerializer(serializers.ModelSerializer):
-    token_on_blockchain = TokenOnBlockchainSerializerForWalletWithTokenOnBlockchainSerializerForWalletSerializer()
-    # history = WalletHistoryWithTokenOnBlockchainSerializer(many=True, read_only=True)
+class WalletWithAssetOnBlockchainSerializerForWalletSerializer(serializers.ModelSerializer):
+    asset_on_blockchain = AssetOnBlockchainSerializerForWalletWithAssetOnBlockchainSerializerForWalletSerializer()
+    # history = WalletHistoryWithAssetOnBlockchainSerializer(many=True, read_only=True)
     balance = serializers.SerializerMethodField()
 
     class Meta:
-        model = WalletWithTokenOnBlockchain
-        fields = ['id', 'token_on_blockchain', 'balance']
+        model = WalletWithAssetOnBlockchain
+        fields = ['id', 'asset_on_blockchain', 'balance']
 
-    def get_balance(self, instance: WalletWithTokenOnBlockchain):
-        return WalletHistoryWithTokenOnBlockchainSerializer(instance.history.last(), many=False).data
+    def get_balance(self, instance: WalletWithAssetOnBlockchain):
+        return WalletHistoryWithAssetOnBlockchainSerializer(instance.history.last(), many=False).data
 
 
 class WalletSerializer(serializers.ModelSerializer):
-    tokens_on_blockchains = WalletWithTokenOnBlockchainSerializerForWalletSerializer(many=True, read_only=True)
+    assets_on_blockchains = WalletWithAssetOnBlockchainSerializerForWalletSerializer(many=True, read_only=True)
 
     class Meta:
         model = Wallet
-        fields = ['id', 'name', 'address', 'tokens_on_blockchains']
+        fields = ['id', 'name', 'address', 'assets_on_blockchains']
 
 
 class BalanceHistorySerializer(serializers.ModelSerializer):

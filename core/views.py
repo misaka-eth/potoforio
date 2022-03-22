@@ -1,6 +1,6 @@
-from core.models import Blockchain, Token, Wallet, TokenOnBlockchain, BalanceHistory
-from core.serializers import BlockchainSerializer, TokenSerializer, WalletSerializer, \
-    TokenOnBlockchainSerializer, BalanceHistorySerializer
+from core.models import Blockchain, Asset, Wallet, AssetOnBlockchain, BalanceHistory
+from core.serializers import BlockchainSerializer, AssetSerializer, WalletSerializer, \
+    AssetOnBlockchainSerializer, BalanceHistorySerializer
 from rest_framework import generics
 
 
@@ -9,9 +9,9 @@ class BlockchainListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = BlockchainSerializer
 
 
-class TokenListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Token.objects.all()
-    serializer_class = TokenSerializer
+class AssetListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Asset.objects.all()
+    serializer_class = AssetSerializer
 
 
 class WalletListCreateAPIView(generics.ListCreateAPIView):
@@ -24,9 +24,9 @@ class WalletRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = WalletSerializer
 
 
-class TokenOnBlockchainListCreateAPIView(generics.ListCreateAPIView):
-    queryset = TokenOnBlockchain.objects.all()
-    serializer_class = TokenOnBlockchainSerializer
+class AssetOnBlockchainListCreateAPIView(generics.ListCreateAPIView):
+    queryset = AssetOnBlockchain.objects.all()
+    serializer_class = AssetOnBlockchainSerializer
 
 
 class BalanceHistoryListAPIView(generics.ListAPIView):
