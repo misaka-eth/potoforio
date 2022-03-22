@@ -33,5 +33,7 @@ def history_manager():
             else:
                 LOGGER.debug("Total balance = 0. Skip")
 
+            time.sleep(60 * 4)
+
     thread = Thread(target=manage)
     thread.start()

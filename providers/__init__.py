@@ -1,5 +1,6 @@
 import logging
 import aiohttp
+import traceback
 
 from core.models import Asset, AssetPriceHistory, AssetOnBlockchain, WalletWithAssetOnBlockchain, Blockchain, Wallet, \
     WalletHistoryWithAssetOnBlockchain
@@ -84,4 +85,8 @@ class BalanceProvider(Provider):
 
         for wallet in wallets:
             if self.match_address(wallet.address):
-                await self.scan_wallet(wallet)
+                try:
+                    await self.scan_wallet(wallet)
+                except Exception as error:
+                    self._logger.warning(f"Error occurred: {error}")
+                    traceback.print_tb(error.__traceback__)
