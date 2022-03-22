@@ -18,7 +18,7 @@ class BeaconchainClient(BalanceProvider):
         response = await self._request('GET', url, params=params)
         response = await response.json()
 
-        blockchain_eth2 = Blockchain.objects.filter(name="Ethereum 2.0").last()
+        blockchain_eth2 = Blockchain.objects.filter(name="Ethereum Validator").last()
         asset_eth = Asset.objects.filter(ticker='ETH').last()
         balance = response.get('data').get('balance') * pow(10, 9)
 
