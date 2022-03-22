@@ -16,6 +16,14 @@ class BeaconchainClient(BalanceProvider):
         }
         url = f"{BeaconchainClient.API_URL}/validator/{wallet.address}"
         response = await self._request('GET', url, params=params)
+
+        # Check if response is valid
+        if response.status != 200 or response.content_type != 'application/json':
+            response_text = await response.text()
+            response_text = response_text.replace("\n", '')
+            self._logger.warning(f"Bad response with code: {response.status} | {response_text}")
+            return
+
         response = await response.json()
 
         blockchain_eth2 = Blockchain.objects.filter(name="Ethereum Validator").last()
