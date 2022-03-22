@@ -19,9 +19,5 @@ class XrpscanClient(BalanceProvider):
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_ripple, asset=asset_xrp, balance=str(balance))
 
-    async def scan_all_wallet(self):
-        wallets = Wallet.objects.filter()
-
-        for wallet in wallets:
-            if wallet.address.startswith('r'):
-                await self.scan_wallet(wallet)
+    def match_address(self, address: str):
+        return address.startswith('r')

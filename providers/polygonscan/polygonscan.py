@@ -41,9 +41,5 @@ class PolygonScan(BalanceProvider):
                 balance=balance
             )
 
-    async def scan_all_wallet(self):
-        wallets = Wallet.objects.filter()
-
-        for wallet in wallets:
-            if len(wallet.address) == 42 and wallet.address.startswith('0x'):
-                await self.scan_wallet(wallet)
+    def match_address(self, address: str):
+        return len(address) == 42 and address.startswith('0x')

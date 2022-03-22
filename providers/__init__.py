@@ -72,3 +72,16 @@ class BalanceProvider(Provider):
         self._logger.info(f"Balance for {wallet_with_asset_on_blockchain} updated. {last_record_balance}->{balance}")
 
         return
+
+    def match_address(self, address: str):
+        raise NotImplementedError
+
+    async def scan_wallet(self, wallet: Wallet):
+        raise NotImplementedError
+
+    async def scan_all_wallet(self):
+        wallets = Wallet.objects.all()
+
+        for wallet in wallets:
+            if self.match_address(wallet.address):
+                await self.scan_wallet(wallet)

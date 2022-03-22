@@ -25,9 +25,6 @@ class BlockchainClient(BalanceProvider):
                     balance=balance
                 )
 
-    async def scan_all_wallet(self):
-        wallets = Wallet.objects.filter()
+    def match_address(self, address: str):
+        return len(address) == 34 and address.startswith('3')
 
-        for wallet in wallets:
-            if len(wallet.address) == 34 and wallet.address.startswith('3'):
-                await self.scan_wallet(wallet)

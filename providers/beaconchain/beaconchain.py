@@ -24,9 +24,6 @@ class BeaconchainClient(BalanceProvider):
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_eth2, asset=asset_eth, balance=str(balance))
 
-    async def scan_all_wallet(self):
-        wallets = Wallet.objects.filter()
+    def match_address(self, address: str):
+        return len(address) == 98 and address.startswith('0x')
 
-        for wallet in wallets:
-            if len(wallet.address) == 98 and wallet.address.startswith('0x'):
-                await self.scan_wallet(wallet)

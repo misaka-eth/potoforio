@@ -22,9 +22,7 @@ class CryptocomClient(BalanceProvider):
             balance=balance
         )
 
-    async def scan_all_wallet(self):
-        wallets = Wallet.objects.filter()
+    def match_address(self, address: str):
+        return address.startswith('cro1')
 
-        for wallet in wallets:
-            if wallet.address.startswith('cro1'):
-                await self.scan_wallet(wallet)
+

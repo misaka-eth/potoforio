@@ -21,9 +21,5 @@ class LitecoinblockexplorerClient(BalanceProvider):
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_ltc, asset=asset_ltc, balance=str(balance))
 
-    async def scan_all_wallet(self):
-        wallets = Wallet.objects.filter()
-
-        for wallet in wallets:
-            if wallet.address.startswith('zpub') or wallet.address.startswith('Ltub'):
-                await self.scan_wallet(wallet)
+    def match_address(self, address: str):
+        return address.startswith('zpub') or address.startswith('Ltub')
