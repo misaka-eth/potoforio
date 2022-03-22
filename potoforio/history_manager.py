@@ -1,7 +1,10 @@
 import time
+import logging
 from threading import Thread
 from core.models import Wallet, BalanceHistory
 from core.serializers import WalletSerializer
+
+LOGGER = logging.getLogger(__name__)
 
 
 def history_manager():
@@ -24,7 +27,11 @@ def history_manager():
 
             # Format and save
             total_balance = float(f'{total_balance:.2f}')
-            BalanceHistory.objects.create(balance=total_balance)
+            if total_balance != 0.0:
+                LOGGER.debug(f"Update total balance to: {total_balance}")
+                BalanceHistory.objects.create(balance=total_balance)
+            else:
+                LOGGER.debug("Total balance = 0. Skip")
 
     thread = Thread(target=manage)
     thread.start()
