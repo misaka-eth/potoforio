@@ -6,23 +6,28 @@ from core.models import Asset, AssetPriceHistory, AssetOnBlockchain, WalletWithA
     WalletHistoryWithAssetOnBlockchain
 
 
+class ProviderConnectionError(Exception):
+    pass
+
+
 class Provider:
     def __init__(self):
         self._logger = logging.getLogger(self.__class__.__name__)
 
-    async def _request(self, method, url, **kwargs):
+    async def _request(self, method: str, url: str, **kwargs):
         self._logger.debug(f">> Request {method} {url} {kwargs}")
 
         async with aiohttp.ClientSession() as session:
-            async with session.request(method, url, **kwargs) as response:
-                self._logger.debug(f"<< Response {await response.read()}")
-
-                return response
+            try:
+                async with session.request(method, url, **kwargs) as response:
+                    self._logger.debug(f"<< Response {await response.read()}")
+                    return response
+            except aiohttp.ClientConnectorError as error:
+                raise ProviderConnectionError from error
 
 
 class PriceProvider(Provider):
-    async def _update_price(self, ticker, price):
-
+    async def _update_price(self, ticker: str, price: float):
         assets = Asset.objects.filter(ticker=ticker).all()
         if not assets:
             self._logger.warning(f"Can't find asset {ticker}.")
@@ -40,6 +45,9 @@ class PriceProvider(Provider):
                 AssetPriceHistory.objects.create(asset=asset, price=price)
             else:
                 self._logger.debug(f"{log_prefix} Skip update: price doesn't change")
+
+    async def scan(self):
+        raise NotImplementedError
 
 
 class BalanceProvider(Provider):
@@ -67,7 +75,7 @@ class BalanceProvider(Provider):
 
         WalletHistoryWithAssetOnBlockchain.objects.create(
             wallet_with_asset_on_blockchain=wallet_with_asset_on_blockchain,
-            balance=str(balance)
+            balance=balance
         )
         last_record_balance = "0" if not last_record else last_record.balance
         self._logger.info(f"Balance for {wallet_with_asset_on_blockchain} updated. {last_record_balance}->{balance}")
@@ -87,6 +95,8 @@ class BalanceProvider(Provider):
             if self.match_address(wallet.address):
                 try:
                     await self.scan_wallet(wallet)
+                except ProviderConnectionError as error:
+                    self._logger.warning(f"ProviderConnectionError: {error}")
                 except Exception as error:
-                    self._logger.warning(f"Error occurred: {error}")
+                    self._logger.warning(f"Unexpected occurred: {error}")
                     traceback.print_tb(error.__traceback__)
