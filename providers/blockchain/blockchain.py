@@ -1,6 +1,6 @@
 from providers import BalanceProvider
 
-from core.models import Wallet, Blockchain, AssetOnBlockchain
+from core.models import Wallet, Blockchain, Asset
 
 
 class BlockchainClient(BalanceProvider):
@@ -12,14 +12,14 @@ class BlockchainClient(BalanceProvider):
         response = await response.json()
 
         blockchain_btc = Blockchain.objects.filter(name="Bitcoin").last()
-        btc_on_btc = AssetOnBlockchain.objects.filter(blockchain=blockchain_btc, asset__ticker="BTC").last()
+        asset_btc = Asset.objects.filter(ticker="BTC").last()
 
         balance = str(response.get(wallet.address).get('final_balance'))
 
         await self._update_balance(
             wallet=wallet,
             blockchain=blockchain_btc,
-            asset=btc_on_btc.asset,
+            asset=asset_btc,
             balance=balance
         )
 

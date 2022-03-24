@@ -1,7 +1,7 @@
 from providers import BalanceProvider
 from bs4 import BeautifulSoup
 
-from core.models import Wallet, Blockchain, AssetOnBlockchain
+from core.models import Wallet, Blockchain, Asset, AssetOnBlockchain
 
 
 class EtherscanBalanceProvider(BalanceProvider):
@@ -16,16 +16,16 @@ class EtherscanBalanceProvider(BalanceProvider):
         soup = BeautifulSoup(response, 'html.parser')
 
         blockchain_eth = Blockchain.objects.filter(name="Ethereum").last()
-        eth_on_eth = AssetOnBlockchain.objects.filter(blockchain=blockchain_eth, asset__ticker="ETH").last()
+        asset_eth = Asset.objects.filter(ticker="ETH").last()
 
         balance = soup.find_all(class_='col-md-8')
         balance = float(balance[0].text.replace(' Ether', ''))
-        balance = int(balance * pow(10, eth_on_eth.asset.decimals))
+        balance = int(balance * pow(10, asset_eth.decimals))
 
         await self._update_balance(
             wallet=wallet,
             blockchain=blockchain_eth,
-            asset=eth_on_eth.asset,
+            asset=asset_eth,
             balance=str(balance)
         )
 
@@ -36,7 +36,6 @@ class EtherscanBalanceProvider(BalanceProvider):
             amount, ticker = erc20_asset.find(class_='list-amount').text.split()
             amount = amount.replace(',', "")
             asset_address = href.split("?")[0].split("/")[2]
-            self._logger.debug(f"{wallet.address}: {amount}{ticker}")
 
             asset_on_eth = AssetOnBlockchain.objects.filter(address=asset_address).last()
 

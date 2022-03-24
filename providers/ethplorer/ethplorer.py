@@ -1,7 +1,7 @@
 import aiohttp
 from providers import BalanceProvider
 
-from core.models import Wallet, Blockchain, AssetOnBlockchain
+from core.models import Wallet, Blockchain, AssetOnBlockchain, Asset
 
 
 class EthplorerClient(BalanceProvider):
@@ -20,13 +20,13 @@ class EthplorerClient(BalanceProvider):
         response = await response.json()
 
         blockchain_eth = Blockchain.objects.filter(name="Ethereum").last()
-        eth_on_eth = AssetOnBlockchain.objects.filter(blockchain=blockchain_eth, asset__ticker="ETH").last()
+        asset_eth = Asset.objects.filter(ticker="ETH").last()
         eth_balance = response.get('ETH').get('rawBalance')
 
         await self._update_balance(
             wallet=wallet,
             blockchain=blockchain_eth,
-            asset=eth_on_eth.asset,
+            asset=asset_eth,
             balance=eth_balance
         )
 
