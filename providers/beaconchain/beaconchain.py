@@ -34,4 +34,3 @@ class BeaconchainClient(BalanceProvider):
 
     def match_address(self, address: str):
         return len(address) == 98 and address.startswith('0x')
-

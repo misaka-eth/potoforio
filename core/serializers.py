@@ -44,7 +44,9 @@ class AssetOnBlockchainSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class AssetOnBlockchainSerializerForWalletWithAssetOnBlockchainSerializerForWalletSerializer(serializers.ModelSerializer):
+class AssetOnBlockchainSerializerForWalletWithAssetOnBlockchainSerializerForWalletSerializer(
+    serializers.ModelSerializer
+):
     blockchain = BlockchainSerializer()
     asset = AssetSerializer()
 
@@ -55,7 +57,6 @@ class AssetOnBlockchainSerializerForWalletWithAssetOnBlockchainSerializerForWall
 
 class WalletWithAssetOnBlockchainSerializerForWalletSerializer(serializers.ModelSerializer):
     asset_on_blockchain = AssetOnBlockchainSerializerForWalletWithAssetOnBlockchainSerializerForWalletSerializer()
-    # history = WalletHistoryWithAssetOnBlockchainSerializer(many=True, read_only=True)
     balance = serializers.SerializerMethodField()
 
     class Meta:

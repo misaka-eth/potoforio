@@ -24,5 +24,3 @@ class CryptocomClient(BalanceProvider):
 
     def match_address(self, address: str):
         return address.startswith('cro1')
-
-
