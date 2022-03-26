@@ -11,7 +11,8 @@ class ProviderConnectionError(Exception):
 
 
 class Provider:
-    def __init__(self):
+    def __init__(self, configuration: dict):
+        self._configuration = configuration
         self._logger = logging.getLogger(self.__class__.__name__)
 
     async def _request(self, method: str, url: str, **kwargs):
@@ -24,6 +25,22 @@ class Provider:
                     return response
             except aiohttp.ClientConnectorError as error:
                 raise ProviderConnectionError from error
+
+    @staticmethod
+    def get_default_configuration():
+        """
+        Called on first register event.
+        Must return dict of default parameters
+        """
+        return {
+            "timeout": 60
+        }
+
+    def get_configuration(self, key: str):
+        return self._configuration.get(key)
+
+    async def run(self):
+        raise NotImplementedError
 
 
 class PriceProvider(Provider):
@@ -48,6 +65,9 @@ class PriceProvider(Provider):
 
     async def scan(self):
         raise NotImplementedError
+
+    async def run(self):
+        return await self.scan()
 
 
 class BalanceProvider(Provider):
@@ -95,8 +115,11 @@ class BalanceProvider(Provider):
             if self.match_address(wallet.address):
                 try:
                     await self.scan_wallet(wallet)
-                except ProviderConnectionError as error:
-                    self._logger.warning(f"ProviderConnectionError: {error}")
+                except ProviderConnectionError:
+                    self._logger.warning(f"ProviderConnectionError")
                 except Exception as error:
                     self._logger.warning(f"Unexpected occurred: {error}")
                     traceback.print_tb(error.__traceback__)
+
+    async def run(self):
+        return await self.scan_all_wallet()

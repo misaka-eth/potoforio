@@ -73,7 +73,8 @@ class WalletHistoryWithAssetOnBlockchain(models.Model):
     Wallet have balance history.
     History collected at specific time or can be specified by user.
     """
-    wallet_with_asset_on_blockchain = models.ForeignKey(WalletWithAssetOnBlockchain, on_delete=models.CASCADE, related_name='history')
+    wallet_with_asset_on_blockchain = models.ForeignKey(WalletWithAssetOnBlockchain, on_delete=models.CASCADE,
+                                                        related_name='history')
 
     timestamp = models.DateTimeField(auto_now_add=True)
     balance = models.CharField(max_length=200)
@@ -101,3 +102,56 @@ class BalanceHistory(models.Model):
     """
     timestamp = models.DateTimeField(auto_now_add=True)
     balance = models.FloatField()
+
+
+class Provider(models.Model):
+    """
+    Registered providers
+    """
+    REGISTERED = 1
+    ACTIVE = 2
+    PAUSED = 3
+    NOT_FOUND = 4
+    STATUS = (
+        (REGISTERED, 'Registered'),
+        (ACTIVE, 'Active'),
+        (PAUSED, 'Paused'),
+        (NOT_FOUND, 'Not found')
+    )
+
+    name = models.CharField(max_length=200, unique=True)
+    path = models.CharField(max_length=200)
+    status = models.PositiveSmallIntegerField(choices=STATUS, default=REGISTERED)
+
+    configuration = models.JSONField()
+
+    @classmethod
+    def register(cls, name: str, path: str, configuration: dict):
+        provider = cls.objects.filter(name=name).first()
+
+        # If record not exists, create one
+        if not provider:
+            return cls.objects.create(name=name, path=path, configuration=configuration)
+
+        # Update status
+        provider.status = Provider.REGISTERED
+        provider.save()
+
+        return provider
+
+    @classmethod
+    def unregister_all(cls):
+        cls.objects.update(status=Provider.NOT_FOUND)
+
+    def __str__(self):
+        return f'<Provider name="{self.name}" path="{self.path}">'
+
+
+class ProviderHistory(models.Model):
+    """
+    Providers running history
+    """
+    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name="history")
+    start_timestamp = models.DateTimeField()
+    end_timestamp = models.DateTimeField(auto_now_add=True)
+    error = models.CharField(max_length=200, null=True)

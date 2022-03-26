@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Blockchain, Asset, Wallet, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
-    WalletHistoryWithAssetOnBlockchain, AssetPriceHistory, BalanceHistory
+    WalletHistoryWithAssetOnBlockchain, AssetPriceHistory, BalanceHistory, Provider, ProviderHistory
 
 
 class BlockchainSerializer(serializers.ModelSerializer):
@@ -79,3 +79,21 @@ class BalanceHistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = BalanceHistory
         fields = ['timestamp', 'balance']
+
+
+class ProviderHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProviderHistory
+        fields = ['start_timestamp', 'end_timestamp', 'error']
+
+
+class ProviderSerializer(serializers.ModelSerializer):
+    status = serializers.CharField(source='get_status_display')
+    last_run = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Provider
+        fields = ['name', 'path', 'status', 'configuration', 'last_run']
+
+    def get_last_run(self, instance: Provider):
+        return ProviderHistorySerializer(instance.history.last(), many=False).data

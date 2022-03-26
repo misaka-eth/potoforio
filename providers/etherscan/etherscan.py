@@ -5,8 +5,9 @@ from core.models import Wallet, Blockchain, Asset, AssetOnBlockchain
 
 
 class EtherscanBalanceProvider(BalanceProvider):
-    def __init__(self):
-        super().__init__()
+    def __init__(self, configuration: dict):
+        super().__init__(configuration)
+
         self._unknown_assets = []
 
     async def scan_wallet(self, wallet: Wallet):

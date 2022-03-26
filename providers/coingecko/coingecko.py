@@ -1,4 +1,4 @@
-from providers import PriceProvider
+from providers import PriceProvider, ProviderConnectionError
 
 
 class CoingeckoClient(PriceProvider):
@@ -21,7 +21,12 @@ class CoingeckoClient(PriceProvider):
 
         url = f"{self.API_URL}/simple/price?ids={coingecho_ids_str}&vs_currencies=usd"
 
-        response = await self._request('GET', url)
+        try:
+            response = await self._request('GET', url)
+        except ProviderConnectionError:
+            self._logger.warning(f"ProviderConnectionError")
+            return
+
         response = await response.json()
 
         for asset in response.keys():

@@ -7,13 +7,15 @@ from core.models import Wallet, Blockchain, AssetOnBlockchain, Asset
 class EthplorerClient(BalanceProvider):
     API_URL = 'https://api.ethplorer.io'
 
-    def __init__(self, apikey="freekey"):
-        super().__init__()
-        self._api_key = apikey
+    @staticmethod
+    def get_default_configuration():
+        configuration = super().get_default_configuration()
+        configuration['api_key'] = 'freekey'
+        return configuration
 
     async def scan_wallet(self, wallet: Wallet):
         params = {
-            'apiKey': self._api_key
+            'apiKey': self._configuration['api_key']
         }
         url = f"{EthplorerClient.API_URL}/getAddressInfo/{wallet.address}"
         response = await self._request('GET', url, params=params)

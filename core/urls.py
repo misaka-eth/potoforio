@@ -11,5 +11,7 @@ urlpatterns = [
 
     path('history/', views.BalanceHistoryListAPIView.as_view()),
 
+    path('providers/', views.ProviderListAPIView.as_view()),
+
     path('asset_on_blockchain/', views.AssetOnBlockchainListCreateAPIView.as_view()),
 ]

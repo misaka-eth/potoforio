@@ -6,13 +6,15 @@ from core.models import Asset, Wallet, Blockchain
 class BeaconchainClient(BalanceProvider):
     API_URL = 'https://beaconcha.in/api/v1/'
 
-    def __init__(self, apikey="freekey"):
-        super().__init__()
-        self._api_key = apikey
+    @staticmethod
+    def get_default_configuration():
+        configuration = BalanceProvider.get_default_configuration()  # TODO: super don't work for some reason
+        configuration['api_key'] = 'freekey'
+        return configuration
 
     async def scan_wallet(self, wallet: Wallet):
         params = {
-            'apiKey': self._api_key
+            'apiKey': self._configuration['api_key']
         }
         url = f"{BeaconchainClient.API_URL}/validator/{wallet.address}"
         response = await self._request('GET', url, params=params)
