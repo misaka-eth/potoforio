@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from core import views
+from potoforio.settings import DEBUG_TOOLBAR
 
 urlpatterns = [
     path('blockchain/', views.BlockchainListCreateAPIView.as_view()),
@@ -15,3 +16,8 @@ urlpatterns = [
 
     path('asset_on_blockchain/', views.AssetOnBlockchainListCreateAPIView.as_view()),
 ]
+
+if DEBUG_TOOLBAR:
+    urlpatterns += [
+        path('__debug__/', include('debug_toolbar.urls')),
+    ]
