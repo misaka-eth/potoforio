@@ -90,7 +90,7 @@ class BalanceProvider(Provider):
         ).last()
 
         if last_record and last_record.balance == balance:
-            self._logger.debug(f"Balance not changed")
+            self._logger.debug(f"Balance not changed for {wallet_with_asset_on_blockchain}")
             return
 
         WalletHistoryWithAssetOnBlockchain.objects.create(
@@ -113,13 +113,7 @@ class BalanceProvider(Provider):
 
         for wallet in wallets:
             if self.match_address(wallet.address):
-                try:
-                    await self.scan_wallet(wallet)
-                except ProviderConnectionError:
-                    self._logger.warning(f"ProviderConnectionError")
-                except Exception as error:
-                    self._logger.warning(f"Unexpected occurred: {error}")
-                    traceback.print_tb(error.__traceback__)
+                await self.scan_wallet(wallet)
 
     async def run(self):
         return await self.scan_all_wallet()
