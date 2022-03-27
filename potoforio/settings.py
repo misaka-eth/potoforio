@@ -142,8 +142,16 @@ if DEBUG_TOOLBAR:
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
 
+LOG_PATH = DB_DIR / 'log.txt'
+LOG_FORMAT = "%(asctime)s:%(levelname)s:%(name)s:%(message)s"
+LOG_LEVEL = logging.DEBUG if DEBUG else logging.INFO
 
-logging.basicConfig(level=logging.DEBUG, format="%(asctime)s:%(levelname)s:%(name)s:%(message)s")
+# Enable logging in to file
+logging.basicConfig(filename=LOG_PATH, level=LOG_LEVEL, format=LOG_FORMAT)
 
-if DEBUG:
-    logging.basicConfig(level=logging.DEBUG)
+# Enable logging in to console
+console = logging.StreamHandler()
+console.setLevel(LOG_LEVEL)
+formatter = logging.Formatter(LOG_FORMAT)
+console.setFormatter(formatter)
+logging.getLogger('').addHandler(console)

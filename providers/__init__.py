@@ -1,6 +1,5 @@
 import logging
 import aiohttp
-import traceback
 
 from core.models import Asset, AssetPriceHistory, AssetOnBlockchain, WalletWithAssetOnBlockchain, Blockchain, Wallet, \
     WalletHistoryWithAssetOnBlockchain
