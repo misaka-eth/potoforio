@@ -38,19 +38,37 @@ class BalanceHistoryListAPIView(generics.ListAPIView):
     serializer_class = BalanceHistorySerializer
 
     def get_queryset(self):
-        start_timestamp = self.request.GET.get('start_timestamp')
+        """
+        Filtering
+        """
+        start_timestamp = self.request.GET.get('start_timestamp', 0)
         start_timestamp = self._parse_start_timestamp(start_timestamp)
 
         return BalanceHistory.objects.filter(timestamp__gte=start_timestamp)
 
     @staticmethod
     def _parse_start_timestamp(start_timestamp):
+        """
+        convert start_timestamp to datetime or raise exception
+        """
         # convert to datetime
         try:
             start_timestamp = int(start_timestamp) // 1000
             return datetime.datetime.fromtimestamp(start_timestamp, tz=pytz.UTC)
         except Exception:
             raise ValidationError(f'Can not parse {start_timestamp} as timestamp string')
+
+    def list(self, request, *args, **kwargs):
+        """
+        Compress data from [{"key1": "value11", "key2": "value12"}, {"key1": "value22", "key2": "value22"}]
+        to ["key1": ["value11", "value12"], "key2": ["value21", "value22"]]
+        """
+        response = super().list(request, *args, **kwargs)
+        response.data = {
+            'timestamps': [item['timestamp'] for item in response.data],
+            'balances': [item['balance'] for item in response.data]
+        }
+        return response
 
 
 class ProviderListAPIView(generics.ListAPIView):

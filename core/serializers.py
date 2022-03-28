@@ -76,9 +76,17 @@ class WalletSerializer(serializers.ModelSerializer):
 
 
 class BalanceHistorySerializer(serializers.ModelSerializer):
+    timestamp = serializers.SerializerMethodField()
+
     class Meta:
         model = BalanceHistory
         fields = ['timestamp', 'balance']
+
+    def get_timestamp(self, instance: BalanceHistory):
+        """
+        return unix timestamp instead of date string
+        """
+        return int(instance.timestamp.timestamp()*1000)
 
 
 class ProviderHistorySerializer(serializers.ModelSerializer):
