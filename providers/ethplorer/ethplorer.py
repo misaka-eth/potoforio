@@ -6,6 +6,7 @@ from core.models import Wallet, Blockchain, AssetOnBlockchain, Asset
 
 class EthplorerClient(BalanceProvider):
     API_URL = 'https://api.ethplorer.io'
+    BLOCKCHAIN_NAME = 'Ethereum'
 
     @staticmethod
     def get_default_configuration():
@@ -21,7 +22,7 @@ class EthplorerClient(BalanceProvider):
         response = await self._request('GET', url, params=params)
         response = await response.json()
 
-        blockchain_eth = Blockchain.objects.filter(name="Ethereum").last()
+        blockchain_eth = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
         asset_eth = Asset.objects.filter(ticker="ETH").last()
         eth_balance = response.get('ETH').get('rawBalance')
 

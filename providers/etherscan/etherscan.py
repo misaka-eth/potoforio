@@ -5,6 +5,8 @@ from core.models import Wallet, Blockchain, Asset, AssetOnBlockchain
 
 
 class EtherscanBalanceProvider(BalanceProvider):
+    BLOCKCHAIN_NAME = 'Ethereum'
+
     def __init__(self, configuration: dict):
         super().__init__(configuration)
 
@@ -16,7 +18,7 @@ class EtherscanBalanceProvider(BalanceProvider):
         response = await response.text()
         soup = BeautifulSoup(response, 'html.parser')
 
-        blockchain_eth = Blockchain.objects.filter(name="Ethereum").last()
+        blockchain_eth = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
         asset_eth = Asset.objects.filter(ticker="ETH").last()
 
         balance = soup.find_all(class_='col-md-8')

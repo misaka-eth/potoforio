@@ -5,6 +5,7 @@ from core.models import Asset, Wallet, Blockchain
 
 class BeaconchainClient(BalanceProvider):
     API_URL = 'https://beaconcha.in/api/v1/'
+    BLOCKCHAIN_NAME = "Ethereum Validator"
 
     @staticmethod
     def get_default_configuration():
@@ -28,7 +29,7 @@ class BeaconchainClient(BalanceProvider):
 
         response = await response.json()
 
-        blockchain_eth2 = Blockchain.objects.filter(name="Ethereum Validator").last()
+        blockchain_eth2 = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
         asset_eth = Asset.objects.filter(ticker='ETH').last()
         balance = response.get('data').get('balance') * pow(10, 9)
 

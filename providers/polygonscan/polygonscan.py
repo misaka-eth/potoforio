@@ -5,6 +5,8 @@ from core.models import Wallet, Blockchain, AssetOnBlockchain
 
 
 class PolygonScan(BalanceProvider):
+    BLOCKCHAIN_NAME = 'Polygon'
+
     def __init__(self, configuration: dict):
         super().__init__(configuration)
         self._unknown_assets = []
@@ -24,7 +26,7 @@ class PolygonScan(BalanceProvider):
             asset_address = href.split("?")[0].split("/")[2]
             self._logger.debug(f"{wallet.address}: {amount}{ticker}")
 
-            blockchain_polygon = Blockchain.objects.filter(name="Polygon").last()
+            blockchain_polygon = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
             asset_on_polygon = AssetOnBlockchain.objects.filter(address=asset_address).last()
 
             if not asset_on_polygon:

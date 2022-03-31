@@ -70,6 +70,12 @@ class PriceProvider(Provider):
 
 
 class BalanceProvider(Provider):
+    BLOCKCHAIN_NAME = ""
+
+    def __init__(self, configuration: dict):
+        super().__init__(configuration)
+        self._all_assets = []
+
     async def _update_balance(self, wallet: Wallet, asset: Asset, blockchain: Blockchain, balance: str):
         asset_on_blockchain = AssetOnBlockchain.objects.filter(blockchain=blockchain, asset=asset).last()
         if not asset_on_blockchain:
@@ -80,6 +86,12 @@ class BalanceProvider(Provider):
             asset_on_blockchain=asset_on_blockchain,
             wallet=wallet
         )
+
+        # Remove asset for all assets, then after scan set remained asset balances as 0
+        try:
+            self._all_assets.remove(wallet_with_asset_on_blockchain)
+        except ValueError:
+            pass
 
         if created:
             self._logger.info(f"Found {wallet_with_asset_on_blockchain}")
@@ -107,12 +119,32 @@ class BalanceProvider(Provider):
     async def scan_wallet(self, wallet: Wallet):
         raise NotImplementedError
 
+    def save_all_assets(self, wallet):
+        if self.BLOCKCHAIN_NAME:
+            self._all_assets = [asset for asset in WalletWithAssetOnBlockchain.objects.filter(
+                wallet=wallet,
+                asset_on_blockchain__blockchain__name=self.BLOCKCHAIN_NAME
+            ).all()]
+
+    def reset_remain_assets(self):
+        for asset in self._all_assets:
+            asset: WalletWithAssetOnBlockchain = asset
+
+            if int(asset.history.last().balance) != 0:
+                WalletHistoryWithAssetOnBlockchain.objects.create(
+                    wallet_with_asset_on_blockchain=asset,
+                    balance=0
+                )
+                self._logger.info("Balance not found in scan. Setting balance as 0: {asset}")
+
     async def scan_all_wallet(self):
         wallets = Wallet.objects.all()
 
         for wallet in wallets:
             if self.match_address(wallet.address):
+                self.save_all_assets(wallet)
                 await self.scan_wallet(wallet)
+                self.reset_remain_assets()
 
     async def run(self):
         return await self.scan_all_wallet()

@@ -5,13 +5,14 @@ from core.models import Asset, Wallet, Blockchain
 
 class CryptocomClient(BalanceProvider):
     API_URL = 'https://crypto.org/explorer/api/v1'
+    BLOCKCHAIN_NAME = "Crypto.com"
 
     async def scan_wallet(self, wallet: Wallet):
         url = f"{CryptocomClient.API_URL}/accounts/{wallet.address}"
         response = await self._request('GET', url)
         response = await response.json()
 
-        blockchain_cryptocom = Blockchain.objects.filter(name="Crypto.com").last()
+        blockchain_cryptocom = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
         asset_cro = Asset.objects.filter(ticker='CRO').last()
 
         balance = str(int(float(response.get('result').get('totalBalance')[0].get('amount'))))
