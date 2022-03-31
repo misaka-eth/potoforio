@@ -7,6 +7,7 @@ class Blockchain(models.Model):
     """
     name = models.CharField(max_length=200, unique=True)
     explorer = models.CharField(max_length=200)
+    nft_explorer = models.CharField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -155,3 +156,35 @@ class ProviderHistory(models.Model):
     start_timestamp = models.DateTimeField()
     end_timestamp = models.DateTimeField(auto_now_add=True)
     error = models.CharField(max_length=200, null=True)
+
+
+class NFTCategory(models.Model):
+    """
+    NFT class in different blockchain is different type.
+    EVM using "Contract address".
+    Crypto.com using "Denom".
+    But in any case it's represent category of NFT.
+    """
+    category_id = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200)
+
+    def __str__(self):
+        return f'<NFTCategory name="{self.name}" category_id="{self.category_id}">'
+
+
+class NFT(models.Model):
+    """
+    Non Fungible Token
+    """
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE, related_name="NFTs")
+    blockchain = models.ForeignKey(Blockchain, on_delete=models.CASCADE, related_name="NFTs")
+    token_id = models.CharField(max_length=200)
+    name = models.CharField(max_length=200)
+    category = models.ForeignKey(NFTCategory, on_delete=models.CASCADE, related_name="NFTs")
+    details = models.JSONField()
+
+    class Meta:
+        unique_together = ('token_id', 'category',)
+
+    def __str__(self):
+        return f'<NFT token_id="{self.token_id}" category="{self.category}">'

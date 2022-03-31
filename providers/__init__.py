@@ -2,7 +2,7 @@ import logging
 import aiohttp
 
 from core.models import Asset, AssetPriceHistory, AssetOnBlockchain, WalletWithAssetOnBlockchain, Blockchain, Wallet, \
-    WalletHistoryWithAssetOnBlockchain
+    WalletHistoryWithAssetOnBlockchain, NFT, NFTCategory
 
 
 class ProviderConnectionError(Exception):
@@ -116,3 +116,56 @@ class BalanceProvider(Provider):
 
     async def run(self):
         return await self.scan_all_wallet()
+
+
+class NFTProvider(Provider):
+    def _get_all_known_ids(self, blockchain: Blockchain, wallet: Wallet):
+        return [(nft.token_id, nft.category.category_id) for nft in NFT.objects.filter(blockchain=blockchain, wallet=wallet).all()]
+
+    def _get_or_create_category(self, category_id: str, name: str):
+        category, created = NFTCategory.objects.get_or_create(category_id=category_id, name=name)
+
+        if created:
+            self._logger.info(f"Found new NFT category: {category}")
+
+        return category
+
+    def _remove_token(self, category_id: str, token_id: str):
+        nft = NFT.objects.filter(token_id=token_id, category__category_id=category_id)
+        self._logger.info(f"Found removed NFT: {nft}")
+        nft.delete()
+
+    def _add_token(
+            self,
+            blockchain: Blockchain,
+            wallet: Wallet,
+            category: NFTCategory,
+            token_id: str,
+            name: str,
+            details: dict = None
+    ):
+        nft = NFT.objects.create(
+            blockchain=blockchain,
+            wallet=wallet,
+            category=category,
+            token_id=token_id,
+            name=name,
+            details=details or {}
+        )
+        self._logger.info(f"Found new NFT: {nft}")
+
+    async def match_address(self, address: str):
+        raise NotImplementedError
+
+    async def scan_wallet(self, wallet: Wallet):
+        raise NotImplementedError
+
+    async def scan_all_wallet(self):
+        wallets = Wallet.objects.all()
+
+        for wallet in wallets:
+            if self.match_address(wallet.address):
+                await self.scan_wallet(wallet)
+
+    async def run(self):
+        await self.scan_all_wallet()
