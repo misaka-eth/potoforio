@@ -20,7 +20,7 @@ class EtherscanBalanceProvider(BalanceProvider):
         asset_eth = Asset.objects.filter(ticker="ETH").last()
 
         balance = soup.find_all(class_='col-md-8')
-        balance = float(balance[0].text.replace(' Ether', ''))
+        balance = float(balance[0].text.replace(' Ether', '').replace(',', ""))
         balance = int(balance * pow(10, asset_eth.decimals))
 
         await self._update_balance(

@@ -20,6 +20,7 @@ class PolygonScan(BalanceProvider):
         for erc20_asset in erc20_assets:
             href = erc20_asset.find('a').get('href')
             amount, ticker = erc20_asset.find(class_='list-amount').text.split()
+            amount = amount.replace(',', "")
             asset_address = href.split("?")[0].split("/")[2]
             self._logger.debug(f"{wallet.address}: {amount}{ticker}")
 
