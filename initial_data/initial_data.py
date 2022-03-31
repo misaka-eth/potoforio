@@ -4,12 +4,20 @@ import logging
 LOGGER = logging.getLogger(__name__)
 
 blockchains = [
-    {"name": "Ethereum", "explorer": "https://etherscan.io/address/"},
+    {
+        "name": "Ethereum",
+        "explorer": "https://etherscan.io/address/",
+        "nft_explorer": 'https://etherscan.io/nft/'
+    },
     {"name": "Ethereum Validator", "explorer": "https://beaconscan.com/validator/"},
     {"name": "Bitcoin", "explorer": "https://blockchair.com/ru/bitcoin/address/"},
     {"name": "Litecoin", "explorer": "https://blockchair.com/ru/litecoin/address/"},
     {"name": "Ripple", "explorer": "https://xrpscan.com/account/"},
-    {"name": "Crypto.com", "explorer": "https://crypto.org/explorer/account/"},
+    {
+        "name": "Crypto.com",
+        "explorer": "https://crypto.org/explorer/account/",
+        "nft_explorer": "https://crypto.org/explorer/nfts/tokens/"
+    },
     {"name": "Polygon", "explorer": "https://polygonscan.com/address/"},
 ]
 
@@ -46,7 +54,10 @@ def init_data():
         return
 
     for blockchain in blockchains:
-        Blockchain.objects.create(name=blockchain['name'], explorer=blockchain['explorer'])
+        Blockchain.objects.create(
+            name=blockchain['name'],
+            explorer=blockchain.get('explorer'),
+            nft_explorer=blockchain.get('nft_explorer'))
 
     for asset in assets:
         Asset.objects.create(

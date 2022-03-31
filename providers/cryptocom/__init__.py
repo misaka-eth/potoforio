@@ -1,1 +1,1 @@
-from .cryptocom import CryptocomClient
+from .cryptocom import CryptocomClient, CryptocomNFTProvider

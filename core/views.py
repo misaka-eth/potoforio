@@ -2,9 +2,9 @@ import datetime
 
 import pytz
 
-from core.models import Blockchain, Asset, Wallet, AssetOnBlockchain, BalanceHistory, Provider
+from core.models import Blockchain, Asset, Wallet, AssetOnBlockchain, BalanceHistory, Provider, NFT
 from core.serializers import BlockchainSerializer, AssetSerializer, WalletSerializer, \
-    AssetOnBlockchainSerializer, BalanceHistorySerializer, ProviderSerializer
+    AssetOnBlockchainSerializer, BalanceHistorySerializer, ProviderSerializer, NFTSerializer
 from rest_framework import generics
 from rest_framework.exceptions import ValidationError
 
@@ -74,3 +74,8 @@ class BalanceHistoryListAPIView(generics.ListAPIView):
 class ProviderListAPIView(generics.ListAPIView):
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
+
+
+class NFTListAPIView(generics.ListAPIView):
+    queryset = NFT.objects.all()
+    serializer_class = NFTSerializer

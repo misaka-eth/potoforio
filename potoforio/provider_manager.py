@@ -57,6 +57,7 @@ async def async_runner(provider: Provider):
             await provider.run()
         except Exception as err:
             error = err
+            LOGGER.warning(f"Error while running: {provider.__class__.__name__}: {err}")
 
         # Save result to history
         ProviderHistoryModel.objects.create(

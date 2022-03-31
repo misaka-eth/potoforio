@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Blockchain, Asset, Wallet, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
-    WalletHistoryWithAssetOnBlockchain, AssetPriceHistory, BalanceHistory, Provider, ProviderHistory
+    WalletHistoryWithAssetOnBlockchain, AssetPriceHistory, BalanceHistory, Provider, ProviderHistory, NFTCategory, NFT
 
 
 class BlockchainSerializer(serializers.ModelSerializer):
@@ -105,3 +105,25 @@ class ProviderSerializer(serializers.ModelSerializer):
 
     def get_last_run(self, instance: Provider):
         return ProviderHistorySerializer(instance.history.last(), many=False).data
+
+
+class WalletFroNFTSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Wallet
+        fields = '__all__'
+
+
+class NFTCategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NFTCategory
+        fields = '__all__'
+
+
+class NFTSerializer(serializers.ModelSerializer):
+    wallet = WalletFroNFTSerializer()
+    category = NFTCategorySerializer()
+    blockchain = BlockchainSerializer()
+
+    class Meta:
+        model = NFT
+        fields = '__all__'
