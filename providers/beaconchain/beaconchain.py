@@ -1,4 +1,4 @@
-from providers import BalanceProvider
+from providers import BalanceProvider, ProviderInvalidResponse
 
 from core.models import Asset, Wallet, Blockchain
 
@@ -22,10 +22,7 @@ class BeaconchainClient(BalanceProvider):
 
         # Check if response is valid
         if response.status != 200 or response.content_type != 'application/json':
-            response_text = await response.text()
-            response_text = response_text.replace("\n", '')
-            self._logger.warning(f"Bad response with code: {response.status} | {response_text}")
-            return
+            raise ProviderInvalidResponse(f"Bad response with code: {response.status}")
 
         response = await response.json()
 

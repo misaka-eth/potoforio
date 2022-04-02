@@ -5,7 +5,15 @@ from core.models import Asset, AssetPriceHistory, AssetOnBlockchain, WalletWithA
     WalletHistoryWithAssetOnBlockchain, NFT, NFTCategory
 
 
+class ProviderException(Exception):
+    pass
+
+
 class ProviderConnectionError(Exception):
+    pass
+
+
+class ProviderInvalidResponse(ProviderException):
     pass
 
 
