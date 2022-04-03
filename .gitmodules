@@ -1,0 +1,3 @@
+[submodule "potoforio-frontend"]
+	path = potoforio-frontend
+	url = https://github.com/misaka-eth/potoforio-frontend
