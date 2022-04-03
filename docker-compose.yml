@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  potoforio:
+    container_name: potoforio
+    build:
+      context: .
+    ports:
+      - "8810:80"
+    volumes:
+      - ./data:/data
