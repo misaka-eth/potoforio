@@ -15,7 +15,7 @@ SECRET_KEY = 'django-insecure-wd()1466fa+e@$=beda94(0i4m+7k#04(laqwmuv=6*h6#et0@
 
 
 # Load variables from environment
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', ['localhost', '127.0.0.1']).split(",")
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', ['localhost,127.0.0.1']).split(",")
 DB_DIR = Path(os.environ.get('DB_DIR', 'data'))
 DEBUG = bool(os.environ.get('DEBUG', False))
 DEBUG_TOOLBAR = bool(os.environ.get('DEBUG_TOOLBAR', False))
