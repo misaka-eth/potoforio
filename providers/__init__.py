@@ -22,7 +22,10 @@ class Provider:
         self._configuration = configuration
         self._logger = logging.getLogger(self.__class__.__name__)
 
-    async def _request(self, method: str, url: str, **kwargs):
+    async def _request(self, method: str, url: str, **kwargs) -> aiohttp.ClientResponse:
+        """
+        aiohttp requests with custom logger and error handling
+        """
         self._logger.debug(f">> Request {method} {url} {kwargs}")
 
         async with aiohttp.ClientSession() as session:
@@ -34,7 +37,7 @@ class Provider:
                 raise ProviderConnectionError from error
 
     @staticmethod
-    def get_default_configuration():
+    def get_default_configuration() -> dict:
         """
         Called on first register event.
         Must return dict of default parameters
@@ -43,15 +46,18 @@ class Provider:
             "timeout": 60
         }
 
-    def get_configuration(self, key: str):
+    def get_configuration(self, key: str) -> int | float | dict | list:
         return self._configuration.get(key)
 
-    async def run(self):
+    async def run(self) -> None:
+        """
+        Identical entry point for all providers
+        """
         raise NotImplementedError
 
 
 class PriceProvider(Provider):
-    async def _update_price(self, ticker: str, price: float):
+    async def _update_price(self, ticker: str, price: float) -> None:
         assets = Asset.objects.filter(ticker=ticker).all()
         if not assets:
             self._logger.warning(f"Can't find asset {ticker}.")
@@ -59,7 +65,8 @@ class PriceProvider(Provider):
         for asset in assets:
             log_prefix = f"Update price for asset: {asset} -"
             last_price = AssetPriceHistory.objects.filter(asset=asset).order_by('timestamp').last()
-            if not last_price or last_price.price != price:
+            is_price_changed = last_price and last_price.price != price
+            if is_price_changed:
                 if last_price:
                     price_difference = price - last_price.price
                     price_difference_str = f"{'+' if price_difference > 0 else ''}{price_difference:.2f}"
@@ -70,10 +77,10 @@ class PriceProvider(Provider):
             else:
                 self._logger.debug(f"{log_prefix} Skip update: price doesn't change")
 
-    async def scan(self):
+    async def scan(self) -> None:
         raise NotImplementedError
 
-    async def run(self):
+    async def run(self) -> None:
         return await self.scan()
 
 
@@ -84,7 +91,10 @@ class BalanceProvider(Provider):
         super().__init__(configuration)
         self._all_assets = []
 
-    async def _update_balance(self, wallet: Wallet, asset: Asset, blockchain: Blockchain, balance: str):
+    async def _update_balance(self, wallet: Wallet, asset: Asset, blockchain: Blockchain, balance: str) -> None:
+        """
+        Update balance for given address
+        """
         asset_on_blockchain = AssetOnBlockchain.objects.filter(blockchain=blockchain, asset=asset).last()
         if not asset_on_blockchain:
             self._logger.warning(f"Asset {asset} not found on blockchain {blockchain}")
@@ -99,6 +109,7 @@ class BalanceProvider(Provider):
         try:
             self._all_assets.remove(wallet_with_asset_on_blockchain)
         except ValueError:
+            # New asset doesn't exist in this list
             pass
 
         if created:
@@ -108,7 +119,8 @@ class BalanceProvider(Provider):
             wallet_with_asset_on_blockchain=wallet_with_asset_on_blockchain
         ).last()
 
-        if last_record and last_record.balance == balance:
+        is_balance_changed = last_record and last_record.balance != balance
+        if not is_balance_changed:
             self._logger.debug(f"Balance not changed for {wallet_with_asset_on_blockchain}")
             return
 
@@ -121,20 +133,32 @@ class BalanceProvider(Provider):
 
         return
 
-    def match_address(self, address: str):
+    def match_address(self, address: str) -> bool:
+        """
+        Return true if address match blockchain, thus can be scanned for assets
+        """
         raise NotImplementedError
 
-    async def scan_wallet(self, wallet: Wallet):
+    async def scan_wallet(self, wallet: Wallet) -> None:
+        """
+        Scan wallet for assets
+        """
         raise NotImplementedError
 
-    def save_all_assets(self, wallet):
+    def save_all_assets(self, wallet) -> None:
+        """
+        Save all assets on wallet
+        """
         if self.BLOCKCHAIN_NAME:
             self._all_assets = [asset for asset in WalletWithAssetOnBlockchain.objects.filter(
                 wallet=wallet,
                 asset_on_blockchain__blockchain__name=self.BLOCKCHAIN_NAME
             ).all()]
 
-    def reset_remain_assets(self):
+    def reset_remain_assets(self) -> None:
+        """
+        Reset balance for assets than doesn't appear in scan, but persists in db.
+        """
         for asset in self._all_assets:
             asset: WalletWithAssetOnBlockchain = asset
 
@@ -145,24 +169,37 @@ class BalanceProvider(Provider):
                 )
                 self._logger.info("Balance not found in scan. Setting balance as 0: {asset}")
 
-    async def scan_all_wallet(self):
+    async def scan_all_wallet(self) -> None:
+        """
+        Scan all wallet for assets
+        """
         wallets = Wallet.objects.all()
 
         for wallet in wallets:
             if self.match_address(wallet.address):
+                # Save all assets before scan.
                 self.save_all_assets(wallet)
+                # Scan
                 await self.scan_wallet(wallet)
+                # Delete unseen assets. They probably removed from wallet
                 self.reset_remain_assets()
 
-    async def run(self):
+    async def run(self) -> None:
         return await self.scan_all_wallet()
 
 
 class NFTProvider(Provider):
-    def _get_all_known_ids(self, blockchain: Blockchain, wallet: Wallet):
-        return [(nft.token_id, nft.category.category_id) for nft in NFT.objects.filter(blockchain=blockchain, wallet=wallet).all()]
+    @staticmethod
+    def _get_all_known_ids(blockchain: Blockchain, wallet: Wallet) -> list:
+        """
+        Return list of ids all known NFT on this wallet
+        """
+        return [(nft.token_id, nft.category.category_id) for nft in NFT.objects.filter(
+            blockchain=blockchain,
+            wallet=wallet
+        ).all()]
 
-    def _get_or_create_category(self, category_id: str, name: str):
+    def _get_or_create_category(self, category_id: str, name: str) -> NFTCategory:
         category, created = NFTCategory.objects.get_or_create(category_id=category_id, name=name)
 
         if created:
@@ -170,7 +207,7 @@ class NFTProvider(Provider):
 
         return category
 
-    def _remove_token(self, category_id: str, token_id: str):
+    def _remove_token(self, category_id: str, token_id: str) -> None:
         nft = NFT.objects.filter(token_id=token_id, category__category_id=category_id)
         self._logger.info(f"Found removed NFT: {nft}")
         nft.delete()
@@ -183,7 +220,7 @@ class NFTProvider(Provider):
             token_id: str,
             name: str,
             details: dict = None
-    ):
+    ) -> None:
         nft = NFT.objects.create(
             blockchain=blockchain,
             wallet=wallet,
@@ -194,18 +231,18 @@ class NFTProvider(Provider):
         )
         self._logger.info(f"Found new NFT: {nft}")
 
-    async def match_address(self, address: str):
+    async def match_address(self, address: str) -> bool:
         raise NotImplementedError
 
-    async def scan_wallet(self, wallet: Wallet):
+    async def scan_wallet(self, wallet: Wallet) -> None:
         raise NotImplementedError
 
-    async def scan_all_wallet(self):
+    async def scan_all_wallet(self) -> None:
         wallets = Wallet.objects.all()
 
         for wallet in wallets:
             if self.match_address(wallet.address):
                 await self.scan_wallet(wallet)
 
-    async def run(self):
-        await self.scan_all_wallet()
+    async def run(self) -> None:
+        return await self.scan_all_wallet()
