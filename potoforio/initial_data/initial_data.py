@@ -57,7 +57,7 @@ def init_data():
         Blockchain.objects.create(
             name=blockchain['name'],
             explorer=blockchain.get('explorer'),
-            nft_explorer=blockchain.get('nft_explorer'))
+            nft_explorer=blockchain.get('nft_explorer', ''))
 
     for asset in assets:
         Asset.objects.create(
