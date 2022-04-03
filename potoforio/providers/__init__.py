@@ -51,7 +51,7 @@ class Provider:
             "timeout": 60
         }
 
-    def get_configuration(self, key: str) -> int | float | dict | list:
+    def get_configuration(self, key: str):  # -> int | float | dict | list:
         return self._configuration.get(key)
 
     async def run(self) -> None:
