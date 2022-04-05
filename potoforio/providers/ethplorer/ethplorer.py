@@ -1,4 +1,3 @@
-import aiohttp
 from potoforio.providers import BalanceProvider
 
 from potoforio.core.models import Wallet, Blockchain, AssetOnBlockchain, Asset
