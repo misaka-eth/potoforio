@@ -1,6 +1,8 @@
 # potoforio
 Potoforio is free, open source, extreme privacy crypto portfolio manager. We DO NOT collect ANY data. Never.
 
+[![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/misaka-eth/potoforio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/misaka-eth/potoforio/context:python)
+[![Total alerts](https://img.shields.io/lgtm/alerts/g/misaka-eth/potoforio.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/misaka-eth/potoforio/alerts/)
 
 ---
 Potoforio use third part provider for data like price wallet balances and asset price.
