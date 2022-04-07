@@ -20,6 +20,6 @@ jobs:
       run: |
         pip install -r requirements.txt
         pip install coverage
-        coverage run -m unittest
+        coverage run ./manage.py test
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v2
