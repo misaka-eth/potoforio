@@ -9,8 +9,8 @@ urlpatterns = [
 
     path('nfts/', views.NFTListAPIView.as_view()),
 
-    path('wallet/', views.WalletListCreateAPIView.as_view()),
-    path('wallet/<pk>', views.WalletRetrieveUpdateDestroyAPIView.as_view()),
+    path('wallet/', views.WalletListCreateAPIView.as_view(), name='wallets'),
+    path('wallet/<pk>', views.WalletRetrieveUpdateDestroyAPIView.as_view(), name='wallet'),
 
     path('history/', views.BalanceHistoryListAPIView.as_view()),
 

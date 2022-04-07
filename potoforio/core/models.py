@@ -33,7 +33,7 @@ class Wallet(models.Model):
     Wallet can be used on different blockchain (ETH/BTC/Cronos).
     """
     name = models.CharField(max_length=200, unique=True)
-    address = models.CharField(max_length=200)
+    address = models.CharField(max_length=200, unique=True)
 
     def __str__(self):
         return f"{self.name} {self.address}"
