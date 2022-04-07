@@ -22,4 +22,4 @@ jobs:
         pip install coverage
         coverage run ./manage.py test
     - name: Upload Coverage to Codecov
-      uses: codecov/codecov-action@v2
+      uses: codecov/codecov-action@v3
