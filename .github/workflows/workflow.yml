@@ -21,5 +21,6 @@ jobs:
         pip install -r requirements.txt
         pip install coverage
         coverage run ./manage.py test
+        coverage json
     - name: Upload Coverage to Codecov
       uses: codecov/codecov-action@v3
