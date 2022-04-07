@@ -21,6 +21,9 @@ DEBUG = bool(os.environ.get('DEBUG', False))
 DEBUG_TOOLBAR = bool(os.environ.get('DEBUG_TOOLBAR', False))
 DEBUG_HTTP = bool(os.environ.get('DEBUG_HTTP', False))
 
+# Create DB dir if it doesn't exist
+if not os.path.exists(DB_DIR):
+    os.makedirs(DB_DIR, exist_ok=True)
 
 # Application definition
 INSTALLED_APPS = [
