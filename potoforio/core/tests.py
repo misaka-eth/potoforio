@@ -39,13 +39,32 @@ class WalletAPITestCase(APITestCase):
 
     def test_delete_wallet(self):
         # Create wallet
-        Wallet.objects.create(name="wallet_1", address="0x")
+        wallet = Wallet.objects.create(name="wallet_1", address="0x")
 
         # Try to delete
-        url = reverse('wallet', args=(1,))
+        url = reverse('wallet', args=(wallet.id,))
         response = self.client.delete(url, format='json')
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(Wallet.objects.count(), 0)
+
+    def test_update_wallet(self):
+        # Create wallet
+        wallet = Wallet.objects.create(name="wallet_1", address="0x")
+
+        # Try to update wallet | Ok
+        url = reverse('wallet', args=(wallet.id,))
+        data = {'name': 'wallet', 'address': '0x'}
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(Wallet.objects.count(), 1)
+        self.assertEqual(Wallet.objects.get().name, 'wallet')
+        self.assertEqual(Wallet.objects.get().address, '0x')
+
+        #  Try to update wallet | with error
+        url = reverse('wallet', args=(wallet.id,))
+        data = {'name': '', 'address': '0x'}
+        response = self.client.put(url, data=data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
 class AssetTestCase(TestCase):
