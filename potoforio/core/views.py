@@ -1,12 +1,13 @@
 import datetime
-
 import pytz
 
-from potoforio.core.models import Blockchain, Asset, Wallet, AssetOnBlockchain, BalanceHistory, Provider, NFT
-from potoforio.core.serializers import BlockchainSerializer, AssetSerializer, WalletSerializer, \
-    AssetOnBlockchainSerializer, BalanceHistorySerializer, ProviderSerializer, NFTSerializer
-from rest_framework import generics
+from rest_framework import filters, generics
 from rest_framework.exceptions import ValidationError
+
+from .models import Blockchain, Asset, Wallet, AssetOnBlockchain, BalanceHistory, Provider, NFT
+from .serializers import BlockchainSerializer, AssetSerializer, WalletSerializer, \
+    AssetOnBlockchainSerializer, BalanceHistorySerializer, ProviderSerializer, NFTSerializer
+from .paginations import NFTPageNumberPagination
 
 
 class BlockchainListCreateAPIView(generics.ListCreateAPIView):
@@ -79,3 +80,6 @@ class ProviderListAPIView(generics.ListAPIView):
 class NFTListAPIView(generics.ListAPIView):
     queryset = NFT.objects.all()
     serializer_class = NFTSerializer
+    pagination_class = NFTPageNumberPagination
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'token_id', 'blockchain__name']
