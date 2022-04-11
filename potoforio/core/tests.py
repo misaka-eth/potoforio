@@ -21,7 +21,7 @@ class WalletTestCase(TestCase):
     def test_wallet_address_unique(self):
         try:
             Wallet.objects.create(name="21", address="21")
-            Wallet.objects.create(name="21", address="21")
+            Wallet.objects.create(name="22", address="21")
             assert False, "Crated wallet with not unique address"
         except django.db.utils.IntegrityError:
             pass
