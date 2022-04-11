@@ -224,7 +224,8 @@ class NFTProvider(Provider):
             category: NFTCategory,
             token_id: str,
             name: str,
-            details: dict = None
+            details: dict = None,
+            image_url: str = None
     ) -> None:
         nft = NFT.objects.create(
             blockchain=blockchain,
@@ -232,7 +233,8 @@ class NFTProvider(Provider):
             category=category,
             token_id=token_id,
             name=name,
-            details=details or {}
+            details=details or {},
+            image_url=image_url
         )
         self._logger.info(f"Found new NFT: {nft}")
 
