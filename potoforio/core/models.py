@@ -186,6 +186,7 @@ class NFT(models.Model):
     details = models.JSONField()
 
     class Meta:
+        ordering = ('-id', )  # Show new first
         unique_together = ('token_id', 'category',)
 
     def __str__(self):
