@@ -182,9 +182,11 @@ class NFT(models.Model):
     token_id = models.CharField(max_length=200)
     name = models.CharField(max_length=200)
     category = models.ForeignKey(NFTCategory, on_delete=models.CASCADE, related_name="NFTs")
+    image_url = models.URLField(null=True)
     details = models.JSONField()
 
     class Meta:
+        ordering = ('-id', )  # Show new first
         unique_together = ('token_id', 'category',)
 
     def __str__(self):

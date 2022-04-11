@@ -48,6 +48,7 @@ class CryptocomNFTProvider(NFTProvider):
         for token in response.get('result'):
             denom_id = token.get('denomId')
             denom_name = token.get('denomName')
+            image_url = token.get('tokenURI')
 
             token_id = token.get('tokenId')
             token_name = token.get('tokenName')
@@ -68,7 +69,8 @@ class CryptocomNFTProvider(NFTProvider):
                     category=category,
                     token_id=token_id,
                     name=token_name,
-                    details=token
+                    details=token,
+                    image_url=image_url
                 )
 
         # Remove token, that exist before, but now missing

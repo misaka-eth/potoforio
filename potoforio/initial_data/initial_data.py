@@ -3,22 +3,30 @@ import logging
 
 LOGGER = logging.getLogger(__name__)
 
+BITCOIN = "Bitcoin"
+ETHEREUM = "Ethereum"
+ETHEREUM_VALIDATOR = "Ethereum Validator"
+LITECOIN = "Litecoin"
+RIPPLE = "Ripple"
+CRYPTOORG = "Crypto.com"
+POLYGON = 'Polygon'
+
 blockchains = [
     {
-        "name": "Ethereum",
+        "name": ETHEREUM,
         "explorer": "https://etherscan.io/address/",
         "nft_explorer": 'https://etherscan.io/nft/'
     },
-    {"name": "Ethereum Validator", "explorer": "https://beaconscan.com/validator/"},
-    {"name": "Bitcoin", "explorer": "https://blockchair.com/ru/bitcoin/address/"},
-    {"name": "Litecoin", "explorer": "https://blockchair.com/ru/litecoin/address/"},
-    {"name": "Ripple", "explorer": "https://xrpscan.com/account/"},
+    {"name": ETHEREUM_VALIDATOR, "explorer": "https://beaconscan.com/validator/"},
+    {"name": BITCOIN, "explorer": "https://blockchair.com/ru/bitcoin/address/"},
+    {"name": LITECOIN, "explorer": "https://blockchair.com/ru/litecoin/address/"},
+    {"name": RIPPLE, "explorer": "https://xrpscan.com/account/"},
     {
-        "name": "Crypto.com",
+        "name": CRYPTOORG,
         "explorer": "https://crypto.org/explorer/account/",
         "nft_explorer": "https://crypto.org/explorer/nfts/tokens/"
     },
-    {"name": "Polygon", "explorer": "https://polygonscan.com/address/"},
+    {"name": POLYGON, "explorer": "https://polygonscan.com/address/"},
 ]
 
 assets = [
@@ -33,17 +41,22 @@ assets = [
 ]
 
 assets_on_blockchains = [
-    ("Ethereum", "ETH", None),
-    ("Ethereum", "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
-    ("Ethereum Validator", "ETH", None),
-    ("Ethereum", "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7"),
-    ("Polygon", "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
-    ("Bitcoin", "BTC", None),
-    ("Litecoin", "LTC", None),
-    ("Ripple", "XRP", None),
-    ("Crypto.com", "CRO", None),
-    ("Polygon", "MATIC", "0x0000000000000000000000000000000000001010"),
-    ("Polygon", "WETH", "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"),
+    # Native
+    (ETHEREUM, "ETH", None),
+    (BITCOIN, "BTC", None),
+    (LITECOIN, "LTC", None),
+    (RIPPLE, "XRP", None),
+    (CRYPTOORG, "CRO", None),
+    (ETHEREUM_VALIDATOR, "ETH", None),
+
+    # Ethereum blockchain
+    (ETHEREUM, "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
+    (ETHEREUM, "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7"),
+
+    # Ethereum blockchain
+    (POLYGON, "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
+    (POLYGON, "MATIC", "0x0000000000000000000000000000000000001010"),
+    (POLYGON, "WETH", "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"),
 ]
 
 
