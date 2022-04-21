@@ -1,4 +1,4 @@
-FROM node:17-alpine as frontend-build
+FROM node:18-alpine as frontend-build
 WORKDIR /app
 COPY ./potoforio-frontend/ .
 RUN npm install
