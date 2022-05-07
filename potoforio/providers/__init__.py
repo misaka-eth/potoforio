@@ -39,7 +39,7 @@ class Provider:
                         self._logger.debug(f"<< Response {read}")
                     return response
             except aiohttp.ClientConnectorError as error:
-                raise ProviderConnectionError from error
+                raise error
 
     @staticmethod
     def get_default_configuration() -> dict:
@@ -194,15 +194,11 @@ class BalanceProvider(Provider):
 
 
 class NFTProvider(Provider):
-    @staticmethod
-    def _get_all_known_ids(blockchain: Blockchain, wallet: Wallet) -> list:
-        """
-        Return list of ids all known NFT on this wallet
-        """
-        return [(nft.token_id, nft.category.category_id) for nft in NFT.objects.filter(
-            blockchain=blockchain,
-            wallet=wallet
-        ).all()]
+    BLOCKCHAIN_NAME = None
+
+    def __init__(self, configuration: dict):
+        super().__init__(configuration)
+        self._all_nfts = []
 
     def _get_or_create_category(self, category_id: str, name: str) -> NFTCategory:
         category, created = NFTCategory.objects.get_or_create(category_id=category_id, name=name)
@@ -211,11 +207,6 @@ class NFTProvider(Provider):
             self._logger.info(f"Found new NFT category: {category}")
 
         return category
-
-    def _remove_token(self, category_id: str, token_id: str) -> None:
-        nft = NFT.objects.filter(token_id=token_id, category__category_id=category_id)
-        self._logger.info(f"Found removed NFT: {nft}")
-        nft.delete()
 
     def _add_token(
             self,
@@ -227,7 +218,7 @@ class NFTProvider(Provider):
             details: dict = None,
             image_url: str = None
     ) -> None:
-        nft = NFT.objects.create(
+        nft, created = NFT.objects.get_or_create(
             blockchain=blockchain,
             wallet=wallet,
             category=category,
@@ -236,7 +227,11 @@ class NFTProvider(Provider):
             details=details or {},
             image_url=image_url
         )
-        self._logger.info(f"Found new NFT: {nft}")
+        if created:
+            self._logger.info(f"Found new NFT: {nft}")
+        else:
+            # if nft exists and found again remove it from list
+            self._all_nfts.remove(nft)
 
     async def match_address(self, address: str) -> bool:
         raise NotImplementedError
@@ -244,12 +239,29 @@ class NFTProvider(Provider):
     async def scan_wallet(self, wallet: Wallet) -> None:
         raise NotImplementedError
 
+    async def save_all_nft(self, wallet: Wallet) -> None:
+        self._all_nfts = [nft for nft in NFT.objects.filter(
+            blockchain__name=self.BLOCKCHAIN_NAME,
+            wallet=wallet
+        ).all()]
+
+    async def reset_remain_nfts(self) -> None:
+        """
+        Remove NFTs and not found in current scan
+        """
+        for nft in self._all_nfts:
+            nft: NFT = nft
+            self._logger.info(f"Removing NFT: {nft}")
+            nft.delete()
+
     async def scan_all_wallet(self) -> None:
         wallets = Wallet.objects.all()
 
         for wallet in wallets:
             if self.match_address(wallet.address):
+                await self.save_all_nft(wallet)
                 await self.scan_wallet(wallet)
+                await self.reset_remain_nfts()
 
     async def run(self) -> None:
         return await self.scan_all_wallet()
