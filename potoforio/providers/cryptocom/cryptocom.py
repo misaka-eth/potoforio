@@ -29,6 +29,7 @@ class CryptocomClient(BalanceProvider):
 
 class CryptocomNFTProvider(NFTProvider):
     API_URL = 'https://crypto.org/explorer/api/v1'
+    BLOCKCHAIN_NAME = "Crypto.com"
 
     async def scan_wallet(self, wallet: Wallet):
         url = f'{CryptocomNFTProvider.API_URL}/nfts/accounts/{wallet.address}/tokens'

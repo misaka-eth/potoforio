@@ -218,20 +218,25 @@ class NFTProvider(Provider):
             details: dict = None,
             image_url: str = None
     ) -> None:
-        nft, created = NFT.objects.get_or_create(
-            blockchain=blockchain,
-            wallet=wallet,
-            category=category,
-            token_id=token_id,
-            name=name,
-            details=details or {},
-            image_url=image_url
-        )
-        if created:
+        nft = NFT.objects.get(token_id=token_id, category=category)
+
+        if not nft:
+            nft, created = NFT.objects.get_or_create(
+                blockchain=blockchain,
+                wallet=wallet,
+                category=category,
+                token_id=token_id,
+                name=name,
+                details=details or {},
+                image_url=image_url
+            )
             self._logger.info(f"Found new NFT: {nft}")
         else:
             # if nft exists and found again remove it from list
-            self._all_nfts.remove(nft)
+            try:
+                self._all_nfts.remove(nft)
+            except ValueError:
+                print(nft)
 
     async def match_address(self, address: str) -> bool:
         raise NotImplementedError
