@@ -88,7 +88,7 @@ def start():
             provider_class = getattr(module, provider.name)
             provider_obj = provider_class(configuration=provider.configuration)
             provider_objs.append(provider_obj)
-        except ModuleNotFoundError:
+        except (ModuleNotFoundError, AttributeError):
             LOGGER.warning(f"Can't load provider: {provider}")
 
     runner(provider_objs)
