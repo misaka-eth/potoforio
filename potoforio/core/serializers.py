@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Blockchain, Asset, Wallet, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
-    WalletHistoryWithAssetOnBlockchain, AssetPriceHistory, BalanceHistory, Provider, ProviderHistory, NFTCategory, NFT
+    WalletHistoryWithAssetOnBlockchain, BalanceHistory, Provider, ProviderHistory, NFTCategory, NFT
 
 
 class BlockchainSerializer(serializers.ModelSerializer):
@@ -26,16 +26,14 @@ class AssetOnBlockchainSerializerForAssetSerializer(serializers.ModelSerializer)
 
 
 class AssetSerializer(serializers.ModelSerializer):
-    last_price = serializers.SerializerMethodField(read_only=True)
     assets_on_blockchains = AssetOnBlockchainSerializerForAssetSerializer(many=True, read_only=True)
 
     class Meta:
         model = Asset
-        fields = ['id', 'name', 'ticker', 'decimals', 'last_price', 'assets_on_blockchains']
-
-    def get_last_price(self, asset: Asset):
-        price_data = AssetPriceHistory.objects.filter(asset=asset).order_by('timestamp').last()
-        return price_data.price if price_data else 0
+        fields = [
+            'id', 'name', 'ticker', 'decimals', 'last_price', 'price_timestamp', 'price_24h_change',
+            'assets_on_blockchains'
+        ]
 
 
 class AssetOnBlockchainSerializer(serializers.ModelSerializer):

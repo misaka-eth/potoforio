@@ -23,6 +23,10 @@ class Asset(models.Model):
 
     blockchains = models.ManyToManyField(Blockchain, through='AssetOnBlockchain')
 
+    last_price = models.FloatField(null=True, blank=True)
+    price_24h_change = models.FloatField(null=True, blank=True)
+    price_timestamp = models.DateTimeField(null=True, blank=True)
+
     def __str__(self):
         return f"{self.ticker} | {self.name}"
 
@@ -83,18 +87,6 @@ class WalletHistoryWithAssetOnBlockchain(models.Model):
 
     class Meta:
         unique_together = ('wallet_with_asset_on_blockchain', 'timestamp', 'balance')
-
-
-class AssetPriceHistory(models.Model):
-    """
-    Asset price for balance calculating
-    """
-    asset = models.ForeignKey(Asset, on_delete=models.CASCADE, related_name="prices")
-    timestamp = models.DateTimeField(auto_now_add=True)
-    price = models.FloatField()
-
-    class Meta:
-        unique_together = ('asset', 'timestamp', 'price')
 
 
 class BalanceHistory(models.Model):
