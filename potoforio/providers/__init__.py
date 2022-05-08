@@ -1,7 +1,9 @@
+import datetime
 import logging
 import aiohttp
+import pytz
 
-from potoforio.core.models import Asset, AssetPriceHistory, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
+from potoforio.core.models import Asset, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
     Blockchain, Wallet, WalletHistoryWithAssetOnBlockchain, NFT, NFTCategory
 
 from potoforio.potoforio.settings import DEBUG_HTTP
@@ -62,23 +64,25 @@ class Provider:
 
 
 class PriceProvider(Provider):
-    async def _update_price(self, ticker: str, price: float) -> None:
+    async def _update_price(self, ticker: str, price: float, h24_change: float = None, timestamp: int = None) -> None:
         assets = Asset.objects.filter(ticker=ticker).all()
         if not assets:
             self._logger.warning(f"Can't find asset {ticker}.")
             return
         for asset in assets:
             log_prefix = f"Update price for asset: {asset} -"
-            last_price = AssetPriceHistory.objects.filter(asset=asset).order_by('timestamp').last()
-            is_price_changed = last_price and last_price.price != price
+            is_price_changed = not asset.last_price or asset.last_price != price
             if is_price_changed:
-                if last_price:
-                    price_difference = price - last_price.price
+                if asset.last_price:
+                    price_difference = price - asset.last_price
                     price_difference_str = f"{'+' if price_difference > 0 else ''}{price_difference:.2f}"
                 else:
                     price_difference_str = "~"
                 self._logger.debug(f"{log_prefix} New price: {price} ({price_difference_str})")
-                AssetPriceHistory.objects.create(asset=asset, price=price)
+                asset.last_price = price
+                asset.price_timestamp = datetime.datetime.fromtimestamp(timestamp, tz=pytz.UTC)
+                asset.price_24h_change = h24_change
+                asset.save()
             else:
                 self._logger.debug(f"{log_prefix} Skip update: price doesn't change")
 
