@@ -21,3 +21,4 @@ Potoforio use third part provider for data like price wallet balances and asset 
     - [Coingecko.com](https://github.com/misaka-eth/potoforio/tree/main/potoforio/providers/coingecko)
   - NFTProviders
     - [Crypto.org](https://github.com/misaka-eth/potoforio/blob/main/potoforio/providers/cryptocom/cryptocom.py)
+    - [Alchemy (Ethereum and Polygon)](https://github.com/misaka-eth/potoforio/blob/main/potoforio/providers/alchemy/alchemy.py)
