@@ -17,7 +17,7 @@ class XrpscanClient(BalanceProvider):
 
         balance = str(response.get('xrpBalance'))
         # Process parsed string to correct balance
-        balance = parse_float(balance, normal_power=asset_xrp.decimals)
+        balance, _ = parse_float(balance, normal_power=asset_xrp.decimals)
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_ripple, asset=asset_xrp, balance=str(balance))
 

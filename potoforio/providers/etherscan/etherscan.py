@@ -25,7 +25,7 @@ class EtherscanBalanceProvider(BalanceProvider):
         balance = soup.find_all(class_='col-md-8')
         balance = balance[0].text.replace(' Ether', '').replace(',', "")
         # Process parsed string to correct balance
-        balance = parse_float(balance, normal_power=asset_eth.decimals)
+        balance, _ = parse_float(balance, normal_power=asset_eth.decimals)
 
         await self._update_balance(
             wallet=wallet,
@@ -51,7 +51,7 @@ class EtherscanBalanceProvider(BalanceProvider):
                 continue
 
             # Process parsed string to correct balance
-            balance = parse_float(amount, normal_power=asset_on_eth.asset.decimals)
+            balance, _ = parse_float(amount, normal_power=asset_on_eth.asset.decimals)
 
             await self._update_balance(
                 wallet=wallet,

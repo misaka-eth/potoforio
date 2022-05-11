@@ -27,7 +27,7 @@ class PolygonScan(BalanceProvider):
         balance = balance[0].text.replace(' MATIC ', '').replace(',', '')
 
         # Process parsed string to correct balance
-        balance = parse_float(balance, normal_power=matic_on_polygon.asset.decimals)
+        balance, _ = parse_float(balance, normal_power=matic_on_polygon.asset.decimals)
 
         # Save balance only if it's non-zero
         if balance:
@@ -60,7 +60,7 @@ class PolygonScan(BalanceProvider):
                 continue
 
             # Process parsed string to correct balance
-            balance = parse_float(balance, normal_power=asset_on_polygon.asset.decimals)
+            balance, _ = parse_float(balance, normal_power=asset_on_polygon.asset.decimals)
 
             await self._update_balance(
                 wallet=wallet,
