@@ -19,6 +19,11 @@ def history_manager():
             for wallet in wallets:
                 for assets_on_blockchains in WalletSerializer(wallet).data['assets_on_blockchains']:
                     balance = assets_on_blockchains.get('balance').get('balance')
+
+                    # Skip records without balances
+                    if not balance:
+                        continue
+
                     decimals = assets_on_blockchains.get('asset_on_blockchain').get('asset').get('decimals')
                     last_price = assets_on_blockchains.get('asset_on_blockchain').get('asset').get('last_price')
 
