@@ -19,7 +19,7 @@ def parse_float(float_str: str, normal_power: [int, None] = None) -> (int, int):
     base = int(f'{before}{after}')
 
     if normal_power is not None:
-        return normalize_power(base=base, power=len(after), normal_power=normal_power)
+        return normalize_power(base=base, power=len(after), normal_power=normal_power), len(after)
 
     return base, len(after)
 

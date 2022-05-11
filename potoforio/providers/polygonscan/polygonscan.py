@@ -66,7 +66,7 @@ class PolygonScan(BalanceProvider):
                 wallet=wallet,
                 blockchain=blockchain_polygon,
                 asset=asset_on_polygon.asset,
-                balance=balance
+                balance=str(balance)
             )
 
     def match_address(self, address: str):
