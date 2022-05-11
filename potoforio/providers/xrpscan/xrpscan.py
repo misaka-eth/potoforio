@@ -1,6 +1,7 @@
 from potoforio.providers import BalanceProvider
 
 from potoforio.core.models import Asset, Wallet, Blockchain
+from potoforio.helpers.parsers import parse_float
 
 
 class XrpscanClient(BalanceProvider):
@@ -11,11 +12,12 @@ class XrpscanClient(BalanceProvider):
         response = await self._request('GET', url)
         response = await response.json()
 
-        balance = float(response.get('xrpBalance')) * pow(10, 6)
-        balance = str(int(balance))
-
         blockchain_ripple = Blockchain.objects.filter(name="Ripple").last()
         asset_xrp = Asset.objects.filter(ticker='XRP').last()
+
+        balance = str(response.get('xrpBalance'))
+        # Process parsed string to correct balance
+        balance = parse_float(balance, normal_power=asset_xrp.decimals)
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_ripple, asset=asset_xrp, balance=str(balance))
 

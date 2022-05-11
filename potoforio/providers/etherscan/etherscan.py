@@ -2,6 +2,7 @@ from potoforio.providers import BalanceProvider
 from bs4 import BeautifulSoup
 
 from potoforio.core.models import Wallet, Blockchain, Asset, AssetOnBlockchain
+from potoforio.helpers.parsers import parse_float
 
 
 class EtherscanBalanceProvider(BalanceProvider):
@@ -22,8 +23,9 @@ class EtherscanBalanceProvider(BalanceProvider):
         asset_eth = Asset.objects.filter(ticker="ETH").last()
 
         balance = soup.find_all(class_='col-md-8')
-        balance = float(balance[0].text.replace(' Ether', '').replace(',', ""))
-        balance = int(balance * pow(10, asset_eth.decimals))
+        balance = balance[0].text.replace(' Ether', '').replace(',', "")
+        # Process parsed string to correct balance
+        balance = parse_float(balance, normal_power=asset_eth.decimals)
 
         await self._update_balance(
             wallet=wallet,
@@ -48,7 +50,8 @@ class EtherscanBalanceProvider(BalanceProvider):
                     self._logger.warning(f"Unknown asset: {amount} {ticker} with address {asset_address}")
                 continue
 
-            balance = str(int(float(amount) * pow(10, asset_on_eth.asset.decimals)))
+            # Process parsed string to correct balance
+            balance = parse_float(amount, normal_power=asset_on_eth.asset.decimals)
 
             await self._update_balance(
                 wallet=wallet,

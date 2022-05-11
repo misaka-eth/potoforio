@@ -9,11 +9,11 @@ def parse_float(float_str: str, normal_power: [int, None] = None) -> (int, int):
         return 0, 0
 
     # Split
-    before, after = float_str.split(".")
-
-    # Check is it's can be parsed to int
-    int(before)
-    int(after)
+    if float_str.count('.'):
+        before, after = float_str.split(".")
+    else:
+        before = float_str
+        after = ''
 
     # Make
     base = int(f'{before}{after}')

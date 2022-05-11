@@ -1,6 +1,7 @@
 from potoforio.providers import BalanceProvider, ProviderInvalidResponse
 
 from potoforio.core.models import Asset, Wallet, Blockchain
+from potoforio.helpers.parsers import normalize_power
 
 
 class BeaconchainClient(BalanceProvider):
@@ -28,7 +29,11 @@ class BeaconchainClient(BalanceProvider):
 
         blockchain_eth2 = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
         asset_eth = Asset.objects.filter(ticker='ETH').last()
-        balance = response.get('data').get('balance') * pow(10, 9)
+
+        balance = response.get('data').get('balance')
+
+        # Process parsed string to correct balance
+        balance = normalize_power(balance, 9, normal_power=asset_eth.decimals)
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_eth2, asset=asset_eth, balance=str(balance))
 
