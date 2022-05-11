@@ -37,4 +37,5 @@ def normalize_power(base: int, power: int, normal_power: int) -> (int, int):
     if power_diff < 0:
         base = int(base / pow(10, -power_diff))
 
-    return base, normal_power
+    return base
+
