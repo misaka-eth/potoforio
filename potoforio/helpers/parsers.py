@@ -1,6 +1,7 @@
-def parse_float(float_str: str) -> (int, int):
+def parse_float(float_str: str, normal_power: [int, None] = None) -> (int, int):
     """
-    Parse float to int, and it's 10^power
+    Parse float to int, and it's 10^power.
+    Normalize it to normal_power if given.
     Example: 44.887088640175348549 -> (44887088640175348549, 18)
     """
     # Correct process 0
@@ -15,9 +16,12 @@ def parse_float(float_str: str) -> (int, int):
     int(after)
 
     # Make
-    full = int(f'{before}{after}')
+    base = int(f'{before}{after}')
 
-    return full, len(after)
+    if normal_power is not None:
+        return normalize_power(base=base, power=len(after), normal_power=normal_power)
+
+    return base, len(after)
 
 
 def normalize_power(base: int, power: int, normal_power: int) -> (int, int):
