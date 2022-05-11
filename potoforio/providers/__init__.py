@@ -222,7 +222,7 @@ class NFTProvider(Provider):
             details: dict = None,
             image_url: str = None
     ) -> None:
-        nft = NFT.objects.get(token_id=token_id, category=category)
+        nft = NFT.objects.filter(token_id=token_id, category=category).last()
 
         if not nft:
             nft, created = NFT.objects.get_or_create(

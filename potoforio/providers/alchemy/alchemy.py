@@ -20,7 +20,7 @@ class AlchemyNFTProvider(NFTProvider):
 
         blockchain = Blockchain.objects.get(name=self.BLOCKCHAIN_NAME)
 
-        for nft in response.get('ownedNfts'):
+        for nft in response.get('ownedNfts', []):
             token_address = nft.get('contract').get('address')
 
             token_id = nft.get('id').get('tokenId')
