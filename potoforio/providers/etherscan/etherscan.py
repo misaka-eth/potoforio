@@ -57,7 +57,7 @@ class EtherscanBalanceProvider(BalanceProvider):
                 wallet=wallet,
                 blockchain=blockchain_eth,
                 asset=asset_on_eth.asset,
-                balance=balance
+                balance=str(balance)
             )
 
     def match_address(self, address: str):

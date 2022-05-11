@@ -20,10 +20,8 @@ class LitecoinblockexplorerClient(BalanceProvider):
 
         balance: str = soup.find_all(class_='table')[0].find_all(class_='data')[2].text
         balance = balance.replace(' LTC', '')
-        print(balance)
         # Process parsed string to correct balance
         balance = parse_float(balance, normal_power=asset_ltc.decimals)
-        print(balance)
 
         await self._update_balance(wallet=wallet, blockchain=blockchain_ltc, asset=asset_ltc, balance=str(balance))
 

@@ -60,7 +60,7 @@ class PolygonScan(BalanceProvider):
                 continue
 
             # Process parsed string to correct balance
-            balance = parse_float(balance, normal_power=matic_on_polygon.asset.decimals)
+            balance = parse_float(balance, normal_power=asset_on_polygon.asset.decimals)
 
             await self._update_balance(
                 wallet=wallet,
