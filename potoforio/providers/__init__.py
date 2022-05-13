@@ -171,12 +171,13 @@ class BalanceProvider(Provider):
         for asset in self._all_assets:
             asset: WalletWithAssetOnBlockchain = asset
 
-            if int(asset.history.last().balance) != 0:
+            last_record = asset.history.last()
+            if last_record and int(last_record.balance) != 0:
                 WalletHistoryWithAssetOnBlockchain.objects.create(
                     wallet_with_asset_on_blockchain=asset,
                     balance=0
                 )
-                self._logger.info("Balance not found in scan. Setting balance as 0: {asset}")
+                self._logger.info(f'Balance not found in scan. Setting balance as 0: {asset}')
 
     async def scan_all_wallet(self) -> None:
         """
