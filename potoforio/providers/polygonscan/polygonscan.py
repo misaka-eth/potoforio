@@ -42,7 +42,7 @@ class PolygonScan(BalanceProvider):
         for erc20_asset in erc20_assets:
             href = erc20_asset.find('a').get('href')
             balance, ticker = erc20_asset.find(class_='list-amount').text.replace(',', '').split()
-            asset_address = href.split("?")[0].split("/")[2]
+            asset_address = href.split("?")[0].split("/")[2].lower()
 
             # Skip MATIC token, due to incorrect representation in list
             if asset_address == '0x0000000000000000000000000000000000001010':
