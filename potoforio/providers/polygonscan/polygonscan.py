@@ -35,7 +35,7 @@ class PolygonScan(BalanceProvider):
                 wallet=wallet,
                 blockchain=blockchain_polygon,
                 asset=matic_on_polygon.asset,
-                balance=balance
+                balance=str(balance)
             )
 
         erc20_assets = soup.find_all(class_='list-custom-ERC-20')
