@@ -13,7 +13,8 @@ class CoingeckoClient(PriceProvider):
             'LTC': 'litecoin',
             'XRP': 'ripple',
             'CRO': 'crypto-com-chain',
-            'MATIC': 'matic-network'
+            'MATIC': 'matic-network',
+            'USDC': 'usd-coin'
         }
 
         coingecho_ids_revers = {value: key for key, value in coingecho_ids.items()}

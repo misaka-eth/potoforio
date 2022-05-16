@@ -38,6 +38,7 @@ assets = [
     {'name': "Ripple", "ticker": "XRP", "decimals": 6},
     {'name': "Cronos", "ticker": "CRO", "decimals": 8},
     {'name': "Polygon", "ticker": "MATIC", "decimals": 18},
+    {'name': "USD Coin", "ticker": "USDC", "decimals": 6}
 ]
 
 assets_on_blockchains = [
@@ -53,37 +54,49 @@ assets_on_blockchains = [
     (ETHEREUM, "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
     (ETHEREUM, "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7"),
 
-    # Ethereum blockchain
+    # Polygon blockchain
     (POLYGON, "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
     (POLYGON, "MATIC", "0x0000000000000000000000000000000000001010"),
     (POLYGON, "WETH", "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"),
+    (POLYGON, "USDC", "0x2791bca1f2de4661ed88a30c99a7a9449aa84174")
 ]
 
 
 def init_data():
     # If any data already exists
-    if Blockchain.objects.first():
-        LOGGER.info("Initial data already exists")
-        return
+    # if Blockchain.objects.first():
+    #     LOGGER.info("Initial data already exists")
+    #     return
 
     for blockchain in blockchains:
-        Blockchain.objects.create(
-            name=blockchain['name'],
-            explorer=blockchain.get('explorer'),
-            nft_explorer=blockchain.get('nft_explorer', ''))
+        if not Blockchain.objects.filter(
+            name=blockchain['name']
+        ):
+            Blockchain.objects.create(
+                name=blockchain['name'],
+                explorer=blockchain.get('explorer'),
+                nft_explorer=blockchain.get('nft_explorer', ''))
 
     for asset in assets:
-        Asset.objects.create(
-            name=asset['name'],
-            ticker=asset['ticker'],
-            decimals=asset['decimals']
-        )
+        if not Asset.objects.filter(ticker=asset['ticker']):
+            Asset.objects.get_or_create(
+                name=asset['name'],
+                ticker=asset['ticker'],
+                decimals=asset['decimals']
+            )
 
     for asset_on_blockchain in assets_on_blockchains:
         blockchain_name, asset_ticker, address = asset_on_blockchain
         blockchain = Blockchain.objects.filter(name=blockchain_name).first()
         asset = Asset.objects.filter(ticker=asset_ticker).first()
 
-        AssetOnBlockchain.objects.create(blockchain=blockchain, asset=asset, address=address)
+        # Keep all address if lowercase
+        if address:
+            address = address.lower()
+
+        if not AssetOnBlockchain.objects.filter(
+            blockchain=blockchain, asset=asset
+        ):
+            AssetOnBlockchain.objects.create(blockchain=blockchain, asset=asset, address=address)
 
     LOGGER.info("Initial data created")
