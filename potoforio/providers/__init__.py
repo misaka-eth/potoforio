@@ -128,7 +128,7 @@ class BalanceProvider(Provider):
             wallet_with_asset_on_blockchain=wallet_with_asset_on_blockchain
         ).last()
 
-        is_balance_changed = last_record and last_record.balance != balance
+        is_balance_changed = last_record is None or last_record.balance != balance
         if not is_balance_changed:
             self._logger.debug(f"Balance not changed for {wallet_with_asset_on_blockchain}")
             return
