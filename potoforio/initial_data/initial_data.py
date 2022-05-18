@@ -12,6 +12,7 @@ CRYPTOORG = "Crypto.com"
 POLYGON = 'Polygon'
 TRON = 'Tron'
 BSC = 'BSC'
+GNOSIS = "Gnosis"
 
 blockchains = [
     {
@@ -30,7 +31,8 @@ blockchains = [
     },
     {"name": POLYGON, "explorer": "https://polygonscan.com/address/"},
     {"name": TRON, "explorer": "https://tronscan.org/#/address/"},
-    {"name": BSC, "explorer": "https://bscscan.com/address/"}
+    {"name": BSC, "explorer": "https://bscscan.com/address/"},
+    {"name": GNOSIS, "explorer": "https://blockscout.com/xdai/mainnet/address/"}
 ]
 
 assets = [
