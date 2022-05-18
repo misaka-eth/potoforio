@@ -206,9 +206,10 @@ class NFTProvider(Provider):
         self._all_nfts = []
 
     def _get_or_create_category(self, category_id: str, name: str) -> NFTCategory:
-        category, created = NFTCategory.objects.get_or_create(category_id=category_id, name=name)
+        category = NFTCategory.objects.filter(category_id=category_id).first()
 
-        if created:
+        if not category:
+            category = NFTCategory.objects.create(category_id=category_id, name=name)
             self._logger.info(f"Found new NFT category: {category}")
 
         return category

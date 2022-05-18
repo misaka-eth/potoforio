@@ -11,6 +11,7 @@ RIPPLE = "Ripple"
 CRYPTOORG = "Crypto.com"
 POLYGON = 'Polygon'
 TRON = 'Tron'
+BSC = 'BSC'
 
 blockchains = [
     {
@@ -28,7 +29,8 @@ blockchains = [
         "nft_explorer": "https://crypto.org/explorer/nfts/tokens/"
     },
     {"name": POLYGON, "explorer": "https://polygonscan.com/address/"},
-    {"name": TRON, "explorer": "https://tronscan.org/#/address/"}
+    {"name": TRON, "explorer": "https://tronscan.org/#/address/"},
+    {"name": BSC, "explorer": "https://bscscan.com/address/"}
 ]
 
 assets = [
