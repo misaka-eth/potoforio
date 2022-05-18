@@ -10,6 +10,7 @@ LITECOIN = "Litecoin"
 RIPPLE = "Ripple"
 CRYPTOORG = "Crypto.com"
 POLYGON = 'Polygon'
+TRON = 'Tron'
 
 blockchains = [
     {
@@ -27,6 +28,7 @@ blockchains = [
         "nft_explorer": "https://crypto.org/explorer/nfts/tokens/"
     },
     {"name": POLYGON, "explorer": "https://polygonscan.com/address/"},
+    {"name": TRON, "explorer": "https://tronscan.org/#/address/"}
 ]
 
 assets = [
@@ -38,7 +40,8 @@ assets = [
     {'name': "Ripple", "ticker": "XRP", "decimals": 6},
     {'name': "Cronos", "ticker": "CRO", "decimals": 8},
     {'name': "Polygon", "ticker": "MATIC", "decimals": 18},
-    {'name': "USD Coin", "ticker": "USDC", "decimals": 6}
+    {'name': "USD Coin", "ticker": "USDC", "decimals": 6},
+    {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6}
 ]
 
 assets_on_blockchains = [
@@ -49,6 +52,7 @@ assets_on_blockchains = [
     (RIPPLE, "XRP", None),
     (CRYPTOORG, "CRO", None),
     (ETHEREUM_VALIDATOR, "ETH", None),
+    (TRON, 'TRX', None),
 
     # Ethereum blockchain
     (ETHEREUM, "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
@@ -58,7 +62,10 @@ assets_on_blockchains = [
     (POLYGON, "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
     (POLYGON, "MATIC", "0x0000000000000000000000000000000000001010"),
     (POLYGON, "WETH", "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"),
-    (POLYGON, "USDC", "0x2791bca1f2de4661ed88a30c99a7a9449aa84174")
+    (POLYGON, "USDC", "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"),
+
+    # Tron blockchain
+    (TRON, "USDT", 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t')
 ]
 
 
