@@ -17,6 +17,7 @@ Potoforio use third part provider for data like price wallet balances and asset 
     - [Litecoinblockexplorer.net](https://github.com/misaka-eth/potoforio/blob/main/potoforio/providers/litecoinblockexplorer/litecoinblockexplorer.py)
     - [Polygonscan.com](https://github.com/misaka-eth/potoforio/blob/main/potoforio/providers/polygonscan/polygonscan.py)
     - [Xrpscan.com](https://github.com/misaka-eth/potoforio/tree/main/potoforio/providers/xrpscan)
+    - [Tronscan.org](https://github.com/misaka-eth/potoforio/blob/main/potoforio/providers/tronscan/tronscan.py)
   - PriceProviders
     - [Coingecko.com](https://github.com/misaka-eth/potoforio/tree/main/potoforio/providers/coingecko)
   - NFTProviders
