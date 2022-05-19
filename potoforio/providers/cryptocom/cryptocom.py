@@ -1,4 +1,4 @@
-from potoforio.providers import BalanceProvider, NFTProvider
+from potoforio.providers import BalanceProvider, NFTProvider, ProviderException
 
 from potoforio.core.models import Asset, Wallet, Blockchain
 
@@ -43,6 +43,15 @@ class CryptocomNFTProvider(NFTProvider):
         response = await response.json()
 
         blockchain = Blockchain.objects.filter(name="Crypto.com").last()
+
+        # Sometimes API return empty (not full?) result list, and pagination return correct length of this list,
+        # so we check those lengths to prevent removing existing NFT from DB
+        result_len = len(response.get('result'))
+        total_record = response.get('pagination').get('total_record')
+        if result_len != total_record:
+            raise ProviderException(
+                f"Got {result_len} elements in result list, but pagination shows {total_record} items"
+            )
 
         for token in response.get('result'):
             denom_id = token.get('denomId')

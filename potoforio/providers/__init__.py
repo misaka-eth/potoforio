@@ -26,9 +26,12 @@ class Provider:
         self._configuration = configuration
         self._logger = logging.getLogger(self.__class__.__name__)
 
-    async def _request(self, method: str, url: str, **kwargs) -> aiohttp.ClientResponse:
+    async def _request(self, method: str, url: str, validate: bool = True, **kwargs) -> aiohttp.ClientResponse:
         """
         aiohttp requests with custom logger and error handling
+
+        params:
+            validate: if true raise exception on non 200 response
         """
         if DEBUG_HTTP:
             self._logger.debug(f">> Request {method} {url} {kwargs}")
@@ -39,6 +42,10 @@ class Provider:
                     read = await response.read()
                     if DEBUG_HTTP:
                         self._logger.debug(f"<< Response {read}")
+
+                    if validate and response.status != 200:
+                        raise ProviderException(f'Got {response.status} response')
+
                     return response
             except aiohttp.ClientConnectorError as error:
                 raise error
