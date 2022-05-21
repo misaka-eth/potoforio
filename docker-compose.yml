@@ -2,6 +2,7 @@ version: "3.9"
 services:
   potoforio:
     container_name: potoforio
+    restart: unless-stopped
     build:
       context: .
     ports:
