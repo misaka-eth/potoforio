@@ -15,7 +15,8 @@ class CoingeckoClient(PriceProvider):
             'CRO': 'crypto-com-chain',
             'MATIC': 'matic-network',
             'USDC': 'usd-coin',
-            'TRX': 'tron'
+            'TRX': 'tron',
+            'DAI': 'dai'
         }
 
         coingecho_ids_revers = {value: key for key, value in coingecho_ids.items()}

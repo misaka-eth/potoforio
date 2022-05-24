@@ -45,7 +45,8 @@ assets = [
     {'name': "Cronos", "ticker": "CRO", "decimals": 8},
     {'name': "Polygon", "ticker": "MATIC", "decimals": 18},
     {'name': "USD Coin", "ticker": "USDC", "decimals": 6},
-    {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6}
+    {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6},
+    {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18}
 ]
 
 assets_on_blockchains = [
@@ -57,6 +58,7 @@ assets_on_blockchains = [
     (CRYPTOORG, "CRO", None),
     (ETHEREUM_VALIDATOR, "ETH", None),
     (TRON, 'TRX', None),
+    (GNOSIS, 'DAI', None),
 
     # Ethereum blockchain
     (ETHEREUM, "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),

@@ -42,8 +42,8 @@ class Provider:
                     read = await response.read()
                     if DEBUG_HTTP:
                         self._logger.debug(f"<< Response {read}")
-
-                    if validate and response.status != 200:
+                    # 404 because some API return empty wallets as 404
+                    if validate and response.status not in [200, 404]:
                         raise ProviderException(f'Got {response.status} response')
 
                     return response
