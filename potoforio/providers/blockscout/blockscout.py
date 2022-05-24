@@ -15,7 +15,6 @@ class BlackscoutBalanceProvider(BalanceProvider):
         }
         response = await self._request('GET', self.API_URL, params=params)
         response = await response.json()
-        print(response)
 
         blockchain = Blockchain.objects.filter(name=self.BLOCKCHAIN_NAME).last()
         asset = Asset.objects.filter(ticker='DAI').last()
