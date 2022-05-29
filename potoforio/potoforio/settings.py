@@ -131,6 +131,12 @@ os.environ["DJANGO_ALLOW_ASYNC_UNSAFE"] = "true"
 
 CORS_ORIGIN_ALLOW_ALL = True
 
+# Allow correct work for basic auth via nginx proxy
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_PERMISSION_CLASSES': [],
+}
+
 # If debug enable, configurate debug_toolbar
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html
 if DEBUG_TOOLBAR:
