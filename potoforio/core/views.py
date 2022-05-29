@@ -65,10 +65,10 @@ class BalanceHistoryListAPIView(generics.ListAPIView):
         to ["key1": ["value11", "value12"], "key2": ["value21", "value22"]]
         """
         response = super().list(request, *args, **kwargs)
-        response.data = {
-            'timestamps': [item['timestamp'] for item in response.data],
-            'balances': [item['balance'] for item in response.data]
-        }
+        response.data = [
+             [item['timestamp'], item['balance']] for item in response.data
+        ]
+
         return response
 
 
