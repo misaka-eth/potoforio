@@ -44,6 +44,7 @@ assets = [
     {'name': "Ripple", "ticker": "XRP", "decimals": 6},
     {'name': "Cronos", "ticker": "CRO", "decimals": 8},
     {'name': "Polygon", "ticker": "MATIC", "decimals": 18},
+    {'name': "Polygon", "ticker": "WMATIC", "decimals": 18},
     {'name': "USD Coin", "ticker": "USDC", "decimals": 6},
     {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6},
     {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18}
@@ -67,6 +68,7 @@ assets_on_blockchains = [
     # Polygon blockchain
     (POLYGON, "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
     (POLYGON, "MATIC", "0x0000000000000000000000000000000000001010"),
+    (POLYGON, "WMATIC", "0x0d500b1d8e8ef31e21c99d1db9a6444d3adf1270"),
     (POLYGON, "WETH", "0x7ceb23fd6bc0add59e62ac25578270cff1b9f619"),
     (POLYGON, "USDC", "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"),
 
