@@ -44,7 +44,7 @@ assets = [
     {'name': "Ripple", "ticker": "XRP", "decimals": 6},
     {'name': "Cronos", "ticker": "CRO", "decimals": 8},
     {'name': "Polygon", "ticker": "MATIC", "decimals": 18},
-    {'name': "Polygon", "ticker": "WMATIC", "decimals": 18},
+    {'name': "Wrapped Polygon", "ticker": "WMATIC", "decimals": 18},
     {'name': "USD Coin", "ticker": "USDC", "decimals": 6},
     {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6},
     {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18}
@@ -93,12 +93,18 @@ def init_data():
                 nft_explorer=blockchain.get('nft_explorer', ''))
 
     for asset in assets:
-        if not Asset.objects.filter(ticker=asset['ticker']):
-            Asset.objects.get_or_create(
+        asset_db = Asset.objects.filter(ticker=asset['ticker']).first()
+        if not asset_db:
+            asset_db = Asset.objects.create(
                 name=asset['name'],
                 ticker=asset['ticker'],
                 decimals=asset['decimals']
             )
+
+        # Rename asset if needed
+        if asset_db.name != asset['name']:
+            asset_db.name = asset['name']
+            asset_db.save()
 
     for asset_on_blockchain in assets_on_blockchains:
         blockchain_name, asset_ticker, address = asset_on_blockchain
