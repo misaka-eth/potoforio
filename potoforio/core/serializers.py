@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Blockchain, Asset, Wallet, AssetOnBlockchain, WalletWithAssetOnBlockchain, \
-    WalletHistoryWithAssetOnBlockchain, BalanceHistory, Provider, ProviderHistory, NFTCategory, NFT
+    WalletHistoryWithAssetOnBlockchain, BalanceHistory, Provider, NFTCategory, NFT
 
 
 class BlockchainSerializer(serializers.ModelSerializer):
@@ -87,12 +87,6 @@ class BalanceHistorySerializer(serializers.ModelSerializer):
         return int(instance.timestamp.timestamp()*1000)
 
 
-class ProviderHistorySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProviderHistory
-        fields = ['start_timestamp', 'end_timestamp', 'error']
-
-
 class ProviderSerializer(serializers.ModelSerializer):
     status = serializers.CharField(source='get_status_display')
     last_run = serializers.SerializerMethodField()
@@ -102,7 +96,11 @@ class ProviderSerializer(serializers.ModelSerializer):
         fields = ['name', 'path', 'status', 'configuration', 'last_run']
 
     def get_last_run(self, instance: Provider):
-        return ProviderHistorySerializer(instance.history.last(), many=False).data
+        return {
+            'start_timestamp': instance.last_run_start_timestamp,
+            'end_timestamp': instance.last_run_end_timestamp,
+            'error': instance.last_run_error
+        }
 
 
 class WalletFroNFTSerializer(serializers.ModelSerializer):

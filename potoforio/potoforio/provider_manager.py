@@ -4,14 +4,12 @@ import importlib
 import inspect
 import asyncio
 import threading
-import datetime
-
-import pytz
+from django.utils import timezone
 
 from potoforio.providers import Provider
 
 from potoforio.core.models import Provider as ProviderModel
-from potoforio.core.models import ProviderHistory as ProviderHistoryModel
+
 
 PROVIDERS_DIR = 'potoforio/providers'
 PROVIDERS_PACKAGE = 'potoforio.providers'
@@ -48,9 +46,10 @@ def register():
 
 async def async_runner(provider: Provider):
     timeout = provider.get_configuration('timeout')
+    provider_db = ProviderModel.objects.filter(name=provider.__class__.__name__).first()
 
     while True:
-        start_time = datetime.datetime.now(tz=pytz.UTC)
+        start_time = timezone.now()
         error = None
 
         # Run safe
@@ -61,11 +60,7 @@ async def async_runner(provider: Provider):
             LOGGER.warning(f"Error while running: {provider.__class__.__name__}: {err}")
 
         # Save result to history
-        ProviderHistoryModel.objects.create(
-            provider=ProviderModel.objects.filter(name=provider.__class__.__name__).first(),
-            start_timestamp=start_time,
-            error=error
-        )
+        provider_db.update_last_run(start_timestamp=start_time, error=error)
 
         # And sleep by conf time
         await asyncio.sleep(timeout)

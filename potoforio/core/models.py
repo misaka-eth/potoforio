@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils import timezone
 
 
 class Blockchain(models.Model):
@@ -118,6 +119,10 @@ class Provider(models.Model):
 
     configuration = models.JSONField()
 
+    last_run_start_timestamp = models.DateTimeField(null=True)
+    last_run_end_timestamp = models.DateTimeField(null=True)
+    last_run_error = models.CharField(max_length=200, null=True)
+
     @classmethod
     def register(cls, name: str, path: str, configuration: dict):
         provider = cls.objects.filter(name=name).first()
@@ -140,15 +145,11 @@ class Provider(models.Model):
     def __str__(self):
         return f'<Provider name="{self.name}" path="{self.path}">'
 
-
-class ProviderHistory(models.Model):
-    """
-    Providers running history
-    """
-    provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name="history")
-    start_timestamp = models.DateTimeField()
-    end_timestamp = models.DateTimeField(auto_now_add=True)
-    error = models.CharField(max_length=200, null=True)
+    def update_last_run(self, start_timestamp, error):
+        self.last_run_start_timestamp = start_timestamp
+        self.last_run_end_timestamp = timezone.now()
+        self.last_run_error = error
+        self.save()
 
 
 class NFTCategory(models.Model):
