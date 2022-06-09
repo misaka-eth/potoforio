@@ -10,8 +10,9 @@ class BeaconchainClient(BalanceProvider):
 
     @staticmethod
     def get_default_configuration():
-        configuration = BalanceProvider.get_default_configuration()  # TODO: super don't work for some reason
+        configuration = BalanceProvider.get_default_configuration()
         configuration['api_key'] = 'freekey'
+        configuration['timeout'] = 60 * 5  # 5 minute timeout by default
         return configuration
 
     async def scan_wallet(self, wallet: Wallet):
