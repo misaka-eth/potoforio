@@ -47,7 +47,8 @@ assets = [
     {'name': "Wrapped Polygon", "ticker": "WMATIC", "decimals": 18},
     {'name': "USD Coin", "ticker": "USDC", "decimals": 6},
     {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6},
-    {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18}
+    {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18},
+    {'name': 'Lido Staked ETH', 'ticker': 'stETH', 'decimals': 18},
 ]
 
 assets_on_blockchains = [
@@ -64,6 +65,7 @@ assets_on_blockchains = [
     # Ethereum blockchain
     (ETHEREUM, "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
     (ETHEREUM, "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7"),
+    (ETHEREUM, "stETH", "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"),
 
     # Polygon blockchain
     (POLYGON, "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
