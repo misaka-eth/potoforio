@@ -5,7 +5,7 @@ RUN npm install
 RUN npm run build
 
 
-FROM nginx:1.21-alpine as runtime
+FROM nginx:1.23-alpine as runtime
 
 RUN apk add python3 py3-pip build-base --no-cache
 
