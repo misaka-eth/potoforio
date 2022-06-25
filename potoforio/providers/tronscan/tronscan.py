@@ -1,6 +1,7 @@
 from potoforio.providers import BalanceProvider
 
 from potoforio.core.models import Asset, Wallet, Blockchain, AssetOnBlockchain
+from potoforio.helpers.parsers import parse_float
 
 
 class TronscanBalanceProvider(BalanceProvider):
@@ -23,7 +24,10 @@ class TronscanBalanceProvider(BalanceProvider):
             token_id = token.get('tokenId').lower()
 
             if token_id == '_':
+                # If it's TRX token get balance from amount (include frozen, staked, etc)
                 asset = Asset.objects.filter(ticker='TRX').last()
+                balance = token.get('amount')
+                balance, _ = parse_float(balance, normal_power=asset.decimals)
             else:
                 asset_on_trx = AssetOnBlockchain.objects.filter(address=token_id).last()
                 if not asset_on_trx:
