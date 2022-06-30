@@ -13,6 +13,7 @@ POLYGON = 'Polygon'
 TRON = 'Tron'
 BSC = 'BSC'
 GNOSIS = "Gnosis"
+OPTIMISM = "Optimism"
 
 blockchains = [
     {
@@ -32,7 +33,8 @@ blockchains = [
     {"name": POLYGON, "explorer": "https://polygonscan.com/address/"},
     {"name": TRON, "explorer": "https://tronscan.org/#/address/"},
     {"name": BSC, "explorer": "https://bscscan.com/address/"},
-    {"name": GNOSIS, "explorer": "https://blockscout.com/xdai/mainnet/address/"}
+    {"name": GNOSIS, "explorer": "https://blockscout.com/xdai/mainnet/address/"},
+    {"name": OPTIMISM, "explorer": "https://optimistic.etherscan.io/address/"}
 ]
 
 assets = [
@@ -49,11 +51,14 @@ assets = [
     {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6},
     {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18},
     {'name': 'Lido Staked ETH', 'ticker': 'stETH', 'decimals': 18},
+    {'name': 'Rocker Pool ETH', 'ticker': 'rETH', 'decimals': 18},
 ]
 
 assets_on_blockchains = [
-    # Native
+    # Native ETH
     (ETHEREUM, "ETH", None),
+    (OPTIMISM, "ETH", None),
+    # Native
     (BITCOIN, "BTC", None),
     (LITECOIN, "LTC", None),
     (RIPPLE, "XRP", None),
@@ -75,7 +80,12 @@ assets_on_blockchains = [
     (POLYGON, "USDC", "0x2791bca1f2de4661ed88a30c99a7a9449aa84174"),
 
     # Tron blockchain
-    (TRON, "USDT", 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t')
+    (TRON, "USDT", 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t'),
+
+    # Optimism
+    (OPTIMISM, "USDC", "0x7f5c764cbc14f9669b88837ca1490cca17c31607"),
+    (OPTIMISM, "USDT", "0x94b008aa00579c1307b0ef2c499ad98a8ce58e58"),
+    (OPTIMISM, "rETH", "0x9bcef72be871e61ed4fbbc7630889bee758eb81d"),
 ]
 
 

@@ -18,7 +18,8 @@ class CoingeckoClient(PriceProvider):
             'TRX': 'tron',
             'DAI': 'dai',
             'WMATIC': 'wmatic',
-            'stETH': 'staked-ether'
+            'stETH': 'staked-ether',
+            'rETH': 'rocket-pool-eth'
         }
 
         coingecho_ids_revers = {value: key for key, value in coingecho_ids.items()}

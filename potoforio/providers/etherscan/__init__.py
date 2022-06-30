@@ -1,1 +1,1 @@
-from .etherscan import EtherscanBalanceProvider
+from .etherscan import EtherscanBalanceProvider, OptimisticEtherscanBalanceProvider

@@ -7,6 +7,7 @@ from potoforio.helpers.parsers import parse_float
 
 class EtherscanBalanceProvider(BalanceProvider):
     BLOCKCHAIN_NAME = 'Ethereum'
+    BASE_URL = 'https://etherscan.io'
 
     def __init__(self, configuration: dict):
         super().__init__(configuration)
@@ -14,7 +15,7 @@ class EtherscanBalanceProvider(BalanceProvider):
         self._unknown_assets = []
 
     async def scan_wallet(self, wallet: Wallet):
-        url = f"https://etherscan.io/address/{wallet.address}"
+        url = f"{self.BASE_URL}/address/{wallet.address}"
         response = await self._request('GET', url)
         response = await response.text()
         soup = BeautifulSoup(response, 'html.parser')
@@ -62,3 +63,8 @@ class EtherscanBalanceProvider(BalanceProvider):
 
     def match_address(self, address: str):
         return len(address) == 42 and address.startswith('0x')
+
+
+class OptimisticEtherscanBalanceProvider(EtherscanBalanceProvider):
+    BLOCKCHAIN_NAME = 'Optimism'
+    BASE_URL = 'https://optimistic.etherscan.io'
