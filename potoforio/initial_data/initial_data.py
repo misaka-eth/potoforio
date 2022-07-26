@@ -51,7 +51,7 @@ assets = [
     {'name': 'Tron', 'ticker': 'TRX', 'decimals': 6},
     {'name': 'xDai', 'ticker': 'DAI', 'decimals': 18},
     {'name': 'Lido Staked ETH', 'ticker': 'stETH', 'decimals': 18},
-    {'name': 'Rocker Pool ETH', 'ticker': 'rETH', 'decimals': 18},
+    {'name': 'Rocket Pool ETH', 'ticker': 'rETH', 'decimals': 18},
 ]
 
 assets_on_blockchains = [
@@ -71,6 +71,7 @@ assets_on_blockchains = [
     (ETHEREUM, "WETH", "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"),
     (ETHEREUM, "USDT", "0xdac17f958d2ee523a2206206994597c13d831ec7"),
     (ETHEREUM, "stETH", "0xae7ab96520de3a18e5e111b5eaab095312d7fe84"),
+    (ETHEREUM, "rETH", "0xae78736cd615f374d3085123a210448e74fc6393"),
 
     # Polygon blockchain
     (POLYGON, "USDT", "0xc2132d05d31c914a87c6611c10748aeb04b58e8f"),
